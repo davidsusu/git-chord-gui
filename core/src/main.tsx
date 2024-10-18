@@ -1,4 +1,4 @@
-import { StrictMode } from 'react'
+import React, { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom';
 import { GitChordGui } from '../lib/main.tsx'
@@ -9,4 +9,4 @@ createRoot(document.getElementById('root')!).render(
             <GitChordGui />
         </BrowserRouter>
     </StrictMode>,
-)
+);
