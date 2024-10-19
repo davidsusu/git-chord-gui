@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import * as path from 'path';
 
 export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(
@@ -11,23 +12,26 @@ export function activate(context: vscode.ExtensionContext) {
                     enableScripts: true,
                 },
             );
-            panel.webview.html = getWebviewContent();
+
+            const scriptUri = panel.webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, 'dist', 'web', 'webview', 'index.js')).toString();
+            panel.webview.html = getWebviewContent(scriptUri);
         })
     );
 }
 
-function getWebviewContent() {
+function getWebviewContent(scriptUri: string) {
     return `
 		<!DOCTYPE html>
 		<html lang="en">
-		<head>
-			<meta charset="UTF-8">
-			<meta name="viewport" content="width=device-width, initial-scale=1.0">
-			<title>Git Chord</title>
-		</head>
-		<body>
-			<p>Hello, this is the Git Chord VSCode extension!</p>
-		</body>
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Git Chord</title>
+            </head>
+            <body>
+                <div id="root"></div>
+                <script src="${scriptUri}"></script>
+            </body>
 		</html>
     `;
 }

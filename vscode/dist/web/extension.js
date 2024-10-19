@@ -37,10 +37,11 @@ function activate(context) {
         const panel = vscode.window.createWebviewPanel('git-chord-panel', 'Git Chord', vscode.ViewColumn.One, {
             enableScripts: true,
         });
-        panel.webview.html = getWebviewContent();
+        const scriptUri = panel.webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, 'dist', 'web', 'webview', 'index.js')).toString();
+        panel.webview.html = getWebviewContent(scriptUri);
     }));
 }
-function getWebviewContent() {
+function getWebviewContent(scriptUri) {
     return `
 		<!DOCTYPE html>
 		<html lang="en">
@@ -50,7 +51,9 @@ function getWebviewContent() {
 			<title>Git Chord</title>
 		</head>
 		<body>
-			<p>Hello, this is the Git Chord VSCode extension!</p>
+            <p>${scriptUri}</p>
+			<div id="root"></div>
+            <script src="${scriptUri}"></script>
 		</body>
 		</html>
     `;
