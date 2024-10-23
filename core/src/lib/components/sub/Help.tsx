@@ -1,10 +1,11 @@
+import React from "react";
 import { useEffect } from "react";
 import LoadingScreen from "../general/LoadingScreen";
 import { useGlobalContext } from "../state/context";
 import { useGlobalStore } from "../state/state"
 import Markdown from "react-markdown";
 
-export default () => {
+export default function Help() {
     const { gitChord } = useGlobalContext();
     const update = useGlobalStore((state) => state.update);
     const help = useGlobalStore((state) => state.help);

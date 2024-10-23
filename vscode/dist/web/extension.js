@@ -45,16 +45,17 @@ function getWebviewContent(scriptUri) {
     return `
 		<!DOCTYPE html>
 		<html lang="en">
-		<head>
-			<meta charset="UTF-8">
-			<meta name="viewport" content="width=device-width, initial-scale=1.0">
-			<title>Git Chord</title>
-		</head>
-		<body>
-            <p>${scriptUri}</p>
-			<div id="root"></div>
-            <script src="${scriptUri}"></script>
-		</body>
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Git Chord</title>
+            </head>
+            <body>
+                <p>Hello, WebView!</p>
+                <div id="test"></div>
+                <div id="root"></div>
+                <script src="${scriptUri}"></script>
+            </body>
 		</html>
     `;
 }

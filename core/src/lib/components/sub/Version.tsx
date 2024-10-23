@@ -1,9 +1,10 @@
+import React from "react";
 import { useEffect } from "react";
 import LoadingScreen from "../general/LoadingScreen";
 import { useGlobalContext } from "../state/context";
 import { useGlobalStore } from "../state/state"
 
-export default () => {
+export default function Version() {
     const { gitChord } = useGlobalContext();
     const update = useGlobalStore((state) => state.update);
     const version = useGlobalStore((state) => state.version);
