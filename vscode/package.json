@@ -45,7 +45,7 @@
     "mocha": "^10.7.3",
     "process": "^0.11.10",
     "ts-loader": "^9.5.1",
-    "typescript": "^5.6.2",
+    "typescript": "^5.6.3",
     "webpack": "^5.95.0",
     "webpack-cli": "^5.1.4"
   },
@@ -55,6 +55,6 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-error-boundary": "^4.1.2",
-    "react-router": "^6.27.0"
+    "react-router-dom": "^6.27.0"
   }
 }

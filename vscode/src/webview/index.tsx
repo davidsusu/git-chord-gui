@@ -1,12 +1,27 @@
 import { GitChordGui } from '@git-chord/gui-core';
 import React from 'react'
 import { createRoot } from 'react-dom/client'
-import { Link, MemoryRouter, Route, Routes } from 'react-router-dom'
+import { ErrorBoundary } from 'react-error-boundary';
+import { MemoryRouter } from 'react-router-dom'
 
-document.getElementById('test')!.innerText = 'Hello, Script!';
-
+function fallbackRender(props: any) {
+    const error = props.error as Error;
+    return (
+        <div role="alert">
+        <p>Something went wrong:</p>
+        <pre style={{ color: "red" }}>{error.name}</pre>
+        <hr />
+        <pre style={{ color: "red" }}>{error.message}</pre>
+        <hr />
+        <pre style={{ color: "red" }}>{error.stack}</pre>
+        </div>
+    );
+}
+  
 createRoot(document.getElementById('root')!).render(
-    <MemoryRouter>
-        <GitChordGui />
-    </MemoryRouter>
+    <ErrorBoundary fallbackRender={fallbackRender}>
+        <MemoryRouter>
+            <GitChordGui />
+        </MemoryRouter>
+    </ErrorBoundary>
 );

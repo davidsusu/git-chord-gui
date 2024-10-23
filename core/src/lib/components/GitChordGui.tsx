@@ -6,6 +6,7 @@ import Help from './sub/Help';
 export default function GitChordGui() {
     return (
         <>
+            <p>Hello, GitChordGui!</p>
             <nav>
                 <ul>
                     <li><Link to="/">Home</Link></li>

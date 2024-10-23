@@ -28,8 +28,6 @@ function getWebviewContent(scriptUri: string) {
                 <title>Git Chord</title>
             </head>
             <body>
-                <p>Hello, WebView!</p>
-                <div id="test"></div>
                 <div id="root"></div>
                 <script src="${scriptUri}"></script>
             </body>

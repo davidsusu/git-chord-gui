@@ -3,6 +3,8 @@ Thumbs.db
 
 npm-debug.log
 node_modules/
+dist/
+package-dist/
 out/
 .vs/
 tsconfig.lsif.json
