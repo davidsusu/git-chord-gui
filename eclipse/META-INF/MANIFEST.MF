@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Git Chord client for Eclipse
+Bundle-SymbolicName: git-chord-gui-eclipse;singleton:=true
+Bundle-Version: 0.1.0.snapshot
+Bundle-Activator: hu.webarticum.gitchordgui.eclipse.Activator
+Bundle-Vendor: davidsusu
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime
+Bundle-RequiredExecutionEnvironment: JavaSE-23
+Automatic-Module-Name: git.chord.gui.eclipse
+Import-Package: jakarta.inject;version="[2.0.0,3.0.0)"
+Bundle-ActivationPolicy: lazy

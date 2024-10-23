@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="Git"
+            id="git">
+      </category>
+      <view
+            id="hu.webarticum.gitchordgui.eclipse.views.GitChordGuiBrowserView"
+            name="Git Chord GUI"
+            icon="icons/sample.png"
+            class="hu.webarticum.gitchordgui.eclipse.views.GitChordGuiBrowserView"
+            category="sample"
+            inject="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.jdt.ui.JavaPerspective">
+         <view
+               id="hu.webarticum.gitchordgui.eclipse.views.BrowserView"
+               relative="org.eclipse.ui.views.ProblemView"
+               relationship="stack">
+         </view>
+      </perspectiveExtension>
+   </extension>
+
+</plugin>
