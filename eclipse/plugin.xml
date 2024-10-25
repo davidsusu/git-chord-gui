@@ -9,11 +9,11 @@
             id="git">
       </category>
       <view
-            id="hu.webarticum.gitchordgui.eclipse.views.GitChordGuiBrowserView"
+            id="hu.webarticum.gitchordgui.eclipse.views.GitChordGui"
             name="Git Chord GUI"
             icon="icons/sample.png"
-            class="hu.webarticum.gitchordgui.eclipse.views.GitChordGuiBrowserView"
-            category="sample"
+            class="hu.webarticum.gitchordgui.eclipse.views.GitChordGui"
+            category="git"
             inject="true">
       </view>
    </extension>
