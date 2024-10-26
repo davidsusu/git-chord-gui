@@ -24,11 +24,9 @@
   },
   "license": "MIT",
   "keywords": [
-    "react-template",
-    "react-library",
-    "typescript",
     "react",
-    "template"
+    "git",
+    "git-chord"
   ],
   "bugs": {
     "url": "https://github.com/davidsusu/git-chord-gui/issues"

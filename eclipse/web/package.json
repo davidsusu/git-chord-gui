@@ -1,7 +1,5 @@
 {
-  "name": "@git-chord/gui-core",
-  "version": "0.1.0-SNAPSHOT",
-  "description": "Git Chord GUI core",
+  "name": "@git-chord/gui-eclipse",
   "main": "dist/cjs/bundle.js",
   "module": "dist/esm/bundle.js",
   "types": "dist/index.d.ts",
@@ -14,22 +12,6 @@
     "test": "jest",
     "lint": "eslint src"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/davidsusu/git-chord-gui.git"
-  },
-  "license": "MIT",
-  "keywords": [
-    "react-template",
-    "react-library",
-    "typescript",
-    "react",
-    "template"
-  ],
-  "bugs": {
-    "url": "https://github.com/davidsusu/git-chord-gui/issues"
-  },
-  "homepage": "https://github.com/davidsusu/git-chord-gui/tree/main/core",
   "dependencies": {
     "@git-chord/gui-core": "file:../../core/package-dist/git-chord-gui-core-0.1.0-SNAPSHOT.tgz",
     "antd": "^5.4.0",
