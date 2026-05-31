@@ -6,13 +6,22 @@ import typescript from "@rollup/plugin-typescript";
 import dts from "rollup-plugin-dts";
 import postcss from "rollup-plugin-postcss";
 import peerDepsExternal from 'rollup-plugin-peer-deps-external';
+import { createRequire } from "node:module";
 
+const require = createRequire(import.meta.url);
+const pkg = require("./package.json");
 
-import pkg from "./package.json" assert { type: 'json' };
+function onwarn(warning, warn) {
+	if (warning.code === "MODULE_LEVEL_DIRECTIVE" && warning.id?.includes("node_modules/@radix-ui/")) {
+		return;
+	}
+	warn(warning);
+}
 
 export default [
 	{
 		input: 'src/index.ts',
+		onwarn,
 		output: [
 			{
 				file: pkg.main,

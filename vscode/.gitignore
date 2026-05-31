@@ -11,3 +11,5 @@ tsconfig.lsif.json
 *.lsif
 *.db
 *.tsbuildinfo
+.demo/
+.demo-tools/

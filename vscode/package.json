@@ -10,30 +10,84 @@
     "Other"
   ],
   "activationEvents": [
-    "onStartupFinished"
+    "onStartupFinished",
+    "onCommand:git-chord.about",
+    "onCommand:git-chord.cliHelp",
+    "onCommand:git-chord.repoState",
+    "onCommand:git-chord.repoStateFromExplorer"
   ],
-  "browser": "./dist/web/extension.js",
+  "main": "./dist/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "git-chord.show",
-        "title": "Git Chord"
+        "command": "git-chord.about",
+        "title": "Git Chord: About"
+      },
+      {
+        "command": "git-chord.cliHelp",
+        "title": "Git Chord: CLI Help"
+      },
+      {
+        "command": "git-chord.repoState",
+        "title": "Git Chord: Repository State"
+      },
+      {
+        "command": "git-chord.repoStateFromExplorer",
+        "title": "Git Chord: Repository State"
       }
-    ]
+    ],
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "git-chord.about"
+        },
+        {
+          "command": "git-chord.cliHelp"
+        },
+        {
+          "command": "git-chord.repoState"
+        },
+        {
+          "command": "git-chord.repoStateFromExplorer",
+          "when": "false"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "git-chord.repoStateFromExplorer",
+          "when": "resourceScheme == file",
+          "group": "git-chord@10"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Git Chord",
+      "properties": {
+        "gitChord.commandPath": {
+          "type": "string",
+          "default": "",
+          "description": "Absolute path to the git-chord executable. When empty, the extension runs git chord from PATH."
+        },
+        "gitChord.openOnStartup": {
+          "type": "boolean",
+          "default": false,
+          "description": "Open the Git Chord panel automatically when the extension starts."
+        }
+      }
+    }
   },
   "scripts": {
-    "test": "vscode-test-web --browserType=chromium --extensionDevelopmentPath=. --extensionTestsPath=dist/web/test/suite/index.js",
-    "pretest": "npm run compile-web",
+    "test": "npm run compile-web",
     "vscode:prepublish": "npm run package-web",
     "compile-web": "webpack",
     "watch-web": "webpack --watch",
     "package-web": "webpack --mode production --devtool hidden-source-map",
-    "lint": "eslint src",
-    "run-in-browser": "vscode-test-web --browserType=chromium --extensionDevelopmentPath=. ."
+    "lint": "eslint src"
   },
   "devDependencies": {
     "@types/assert": "^1.5.10",
     "@types/mocha": "^10.0.8",
+    "@types/node": "^22.7.9",
     "@types/react-dom": "^18.3.1",
     "@types/vscode": "^1.94.0",
     "@types/webpack-env": "^1.18.5",
@@ -51,7 +105,6 @@
   },
   "dependencies": {
     "@git-chord/gui-core": "file:../core/package-dist/git-chord-gui-core-0.1.0-SNAPSHOT.tgz",
-    "path": "^0.12.7",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-error-boundary": "^4.1.2",

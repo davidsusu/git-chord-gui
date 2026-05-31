@@ -1,0 +1,580 @@
+body {
+    margin: 0;
+    --gc-font-family: var(--vscode-font-family, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+    --gc-font-size: var(--vscode-font-size, 13px);
+    --gc-bg: var(--vscode-editor-background, #ffffff);
+    --gc-panel-bg: var(--vscode-sideBar-background, #f6f8fa);
+    --gc-elevated-bg: var(--vscode-editorWidget-background, #ffffff);
+    --gc-foreground: var(--vscode-foreground, #24292f);
+    --gc-muted: var(--vscode-descriptionForeground, #57606a);
+    --gc-border: var(--vscode-panel-border, rgba(31, 35, 40, 0.14));
+    --gc-hover-bg: var(--vscode-list-hoverBackground, rgba(208, 215, 222, 0.35));
+    --gc-active-bg: var(--vscode-list-activeSelectionBackground, #0969da);
+    --gc-active-fg: var(--vscode-list-activeSelectionForeground, #ffffff);
+    --gc-focus: var(--vscode-focusBorder, #0969da);
+    --gc-input-bg: var(--vscode-input-background, #ffffff);
+    --gc-input-fg: var(--vscode-input-foreground, var(--gc-foreground));
+    --gc-input-border: var(--vscode-input-border, var(--gc-border));
+    --gc-button-bg: var(--vscode-button-background, #0969da);
+    --gc-button-fg: var(--vscode-button-foreground, #ffffff);
+    --gc-button-hover-bg: var(--vscode-button-hoverBackground, #0757b8);
+    --gc-secondary-button-bg: var(--vscode-button-secondaryBackground, transparent);
+    --gc-secondary-button-fg: var(--vscode-button-secondaryForeground, var(--gc-foreground));
+    --gc-secondary-button-hover-bg: var(--vscode-button-secondaryHoverBackground, var(--gc-hover-bg));
+    --gc-code-bg: var(--vscode-textCodeBlock-background, rgba(175, 184, 193, 0.18));
+    --gc-link-fg: var(--vscode-textLink-foreground, #0969da);
+    --gc-warning-bg: var(--vscode-inputValidation-warningBackground, rgba(154, 103, 0, 0.14));
+    --gc-warning-border: var(--vscode-inputValidation-warningBorder, rgba(154, 103, 0, 0.45));
+    --gc-radius: 6px;
+    --gc-sidebar-width: 260px;
+}
+
+.gc-root {
+    --gc-font-family: var(--vscode-font-family, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+    --gc-font-size: var(--vscode-font-size, 13px);
+    --gc-bg: var(--vscode-editor-background, #ffffff);
+    --gc-panel-bg: var(--vscode-sideBar-background, #f6f8fa);
+    --gc-elevated-bg: var(--vscode-editorWidget-background, #ffffff);
+    --gc-foreground: var(--vscode-foreground, #24292f);
+    --gc-muted: var(--vscode-descriptionForeground, #57606a);
+    --gc-border: var(--vscode-panel-border, rgba(31, 35, 40, 0.14));
+    --gc-hover-bg: var(--vscode-list-hoverBackground, rgba(208, 215, 222, 0.35));
+    --gc-active-bg: var(--vscode-list-activeSelectionBackground, #0969da);
+    --gc-active-fg: var(--vscode-list-activeSelectionForeground, #ffffff);
+    --gc-focus: var(--vscode-focusBorder, #0969da);
+    --gc-input-bg: var(--vscode-input-background, #ffffff);
+    --gc-input-fg: var(--vscode-input-foreground, var(--gc-foreground));
+    --gc-input-border: var(--vscode-input-border, var(--gc-border));
+    --gc-button-bg: var(--vscode-button-background, #0969da);
+    --gc-button-fg: var(--vscode-button-foreground, #ffffff);
+    --gc-button-hover-bg: var(--vscode-button-hoverBackground, #0757b8);
+    --gc-secondary-button-bg: var(--vscode-button-secondaryBackground, transparent);
+    --gc-secondary-button-fg: var(--vscode-button-secondaryForeground, var(--gc-foreground));
+    --gc-secondary-button-hover-bg: var(--vscode-button-secondaryHoverBackground, var(--gc-hover-bg));
+    --gc-code-bg: var(--vscode-textCodeBlock-background, rgba(175, 184, 193, 0.18));
+    --gc-link-fg: var(--vscode-textLink-foreground, #0969da);
+    --gc-warning-bg: var(--vscode-inputValidation-warningBackground, rgba(154, 103, 0, 0.14));
+    --gc-warning-border: var(--vscode-inputValidation-warningBorder, rgba(154, 103, 0, 0.45));
+    --gc-radius: 6px;
+    --gc-sidebar-width: 260px;
+
+    display: flex;
+    min-height: 100vh;
+    color: var(--gc-foreground);
+    background: var(--gc-bg);
+    font-family: var(--gc-font-family);
+    font-size: var(--gc-font-size);
+    line-height: 1.45;
+}
+
+@media (prefers-color-scheme: dark) {
+    body {
+        --gc-bg: var(--vscode-editor-background, #1f1f1f);
+        --gc-panel-bg: var(--vscode-sideBar-background, #181818);
+        --gc-elevated-bg: var(--vscode-editorWidget-background, #252526);
+        --gc-foreground: var(--vscode-foreground, #cccccc);
+        --gc-muted: var(--vscode-descriptionForeground, #9d9d9d);
+        --gc-border: var(--vscode-panel-border, rgba(255, 255, 255, 0.14));
+        --gc-hover-bg: var(--vscode-list-hoverBackground, rgba(255, 255, 255, 0.08));
+        --gc-code-bg: var(--vscode-textCodeBlock-background, rgba(255, 255, 255, 0.08));
+    }
+
+    .gc-root {
+        --gc-bg: var(--vscode-editor-background, #1f1f1f);
+        --gc-panel-bg: var(--vscode-sideBar-background, #181818);
+        --gc-elevated-bg: var(--vscode-editorWidget-background, #252526);
+        --gc-foreground: var(--vscode-foreground, #cccccc);
+        --gc-muted: var(--vscode-descriptionForeground, #9d9d9d);
+        --gc-border: var(--vscode-panel-border, rgba(255, 255, 255, 0.14));
+        --gc-hover-bg: var(--vscode-list-hoverBackground, rgba(255, 255, 255, 0.08));
+        --gc-code-bg: var(--vscode-textCodeBlock-background, rgba(255, 255, 255, 0.08));
+    }
+}
+
+.gc-root * {
+    box-sizing: border-box;
+}
+
+.gc-sidebar {
+    flex: 0 0 var(--gc-sidebar-width);
+    width: var(--gc-sidebar-width);
+    min-height: 100vh;
+    border-right: 1px solid var(--gc-border);
+    background: var(--gc-panel-bg);
+}
+
+.gc-main {
+    flex: 1;
+    min-width: 0;
+    min-height: 100vh;
+    background: var(--gc-bg);
+}
+
+.gc-scroll-root {
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.gc-scroll-viewport {
+    width: 100%;
+    height: 100%;
+}
+
+.gc-scrollbar {
+    display: flex;
+    touch-action: none;
+    user-select: none;
+    padding: 2px;
+    background: transparent;
+    transition: background 160ms ease;
+}
+
+.gc-scrollbar[data-orientation="vertical"] {
+    width: 10px;
+}
+
+.gc-scrollbar[data-orientation="horizontal"] {
+    height: 10px;
+}
+
+.gc-scroll-thumb {
+    position: relative;
+    flex: 1;
+    border-radius: 999px;
+    background: var(--vscode-scrollbarSlider-background, rgba(127, 127, 127, 0.35));
+}
+
+.gc-sidebar-inner {
+    padding: 16px 14px;
+}
+
+.gc-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.gc-brand-mark {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border: 1px solid var(--gc-border);
+    border-radius: var(--gc-radius);
+    background: var(--gc-elevated-bg);
+    color: var(--gc-foreground);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.gc-brand-title {
+    font-size: 14px;
+    font-weight: 650;
+}
+
+.gc-brand-subtitle,
+.gc-context-kicker,
+.gc-page-description,
+.gc-muted {
+    color: var(--gc-muted);
+}
+
+.gc-brand-subtitle {
+    font-size: 12px;
+}
+
+.gc-separator {
+    height: 1px;
+    margin: 14px 0;
+    background: var(--gc-border);
+}
+
+.gc-context-card {
+    display: grid;
+    gap: 2px;
+    padding: 10px;
+    border: 1px solid var(--gc-border);
+    border-radius: var(--gc-radius);
+    background: var(--gc-elevated-bg);
+}
+
+.gc-context-card-warning {
+    border-color: var(--gc-warning-border);
+    background: var(--gc-warning-bg);
+}
+
+.gc-context-kicker {
+    font-size: 11px;
+    text-transform: uppercase;
+}
+
+.gc-repo-name {
+    overflow: hidden;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.gc-repo-path {
+    overflow: hidden;
+    color: var(--gc-muted);
+    font-size: 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.gc-nav-section {
+    display: grid;
+    gap: 7px;
+    margin-top: 16px;
+}
+
+.gc-nav-heading {
+    color: var(--gc-muted);
+    font-size: 11px;
+    font-weight: 650;
+    letter-spacing: 0;
+    text-transform: uppercase;
+}
+
+.gc-nav-list {
+    display: grid;
+    gap: 2px;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.gc-nav-item {
+    width: 100%;
+    min-height: 30px;
+    padding: 5px 8px;
+    border: 1px solid transparent;
+    border-radius: var(--gc-radius);
+    color: var(--gc-foreground);
+    background: transparent;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.gc-nav-item:hover {
+    background: var(--gc-hover-bg);
+}
+
+.gc-nav-item:focus-visible,
+.gc-button:focus-visible,
+.gc-input:focus-visible,
+.gc-context-card:focus-visible {
+    outline: 1px solid var(--gc-focus);
+    outline-offset: 1px;
+}
+
+.gc-nav-item[data-active="true"] {
+    border-color: color-mix(in srgb, var(--gc-active-bg) 35%, transparent);
+    color: var(--gc-active-fg);
+    background: var(--gc-active-bg);
+}
+
+.gc-main-inner {
+    width: 100%;
+    max-width: 1120px;
+    padding: 24px 28px 48px;
+}
+
+.gc-page {
+    display: grid;
+    gap: 18px;
+}
+
+.gc-page-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--gc-border);
+}
+
+.gc-page-title {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 650;
+    line-height: 1.2;
+}
+
+.gc-page-description {
+    max-width: 78ch;
+    margin-top: 4px;
+}
+
+.gc-page-body {
+    min-width: 0;
+}
+
+.gc-page-actions {
+    flex: 0 0 auto;
+}
+
+.gc-empty-state {
+    display: grid;
+    gap: 5px;
+    max-width: 52rem;
+    padding: 14px;
+    border: 1px solid var(--gc-border);
+    border-radius: var(--gc-radius);
+    background: var(--gc-elevated-bg);
+}
+
+.gc-meta-list {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    gap: 8px 16px;
+    max-width: 48rem;
+    margin: 0;
+}
+
+.gc-meta-list dt {
+    color: var(--gc-muted);
+}
+
+.gc-meta-list dd {
+    min-width: 0;
+    margin: 0;
+}
+
+.gc-link {
+    color: var(--gc-link-fg);
+}
+
+.gc-markdown {
+    max-width: 84ch;
+}
+
+.gc-markdown h1,
+.gc-markdown h2,
+.gc-markdown h3 {
+    margin: 1.1em 0 0.45em;
+    line-height: 1.25;
+}
+
+.gc-markdown h1:first-child,
+.gc-markdown h2:first-child,
+.gc-markdown h3:first-child,
+.gc-markdown p:first-child {
+    margin-top: 0;
+}
+
+.gc-markdown p {
+    margin: 0.65em 0;
+}
+
+.gc-markdown code,
+.gc-code,
+.gc-code-output {
+    font-family: var(--vscode-editor-font-family, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace);
+}
+
+.gc-markdown pre,
+.gc-code-output {
+    overflow: auto;
+    padding: 12px;
+    border: 1px solid var(--gc-border);
+    border-radius: var(--gc-radius);
+    background: var(--gc-code-bg);
+    white-space: pre-wrap;
+}
+
+.gc-code-output {
+    margin: 0;
+}
+
+.gc-table-wrap {
+    overflow: auto;
+    border: 1px solid var(--gc-border);
+    border-radius: var(--gc-radius);
+}
+
+.gc-config-table {
+    width: 100%;
+    min-width: 760px;
+    border-collapse: collapse;
+}
+
+.gc-config-table th,
+.gc-config-table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--gc-border);
+    text-align: left;
+    vertical-align: middle;
+}
+
+.gc-config-table th {
+    color: var(--gc-muted);
+    background: var(--gc-panel-bg);
+    font-size: 12px;
+    font-weight: 650;
+}
+
+.gc-config-table tr:last-child td {
+    border-bottom: 0;
+}
+
+.gc-config-table code {
+    word-break: break-word;
+}
+
+.gc-config-value {
+    min-width: 18rem;
+}
+
+.gc-config-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.gc-input {
+    width: 100%;
+    min-width: 18rem;
+    height: 30px;
+    padding: 4px 8px;
+    border: 1px solid var(--gc-input-border);
+    border-radius: var(--gc-radius);
+    color: var(--gc-input-fg);
+    background: var(--gc-input-bg);
+    font: inherit;
+}
+
+.gc-button {
+    min-height: 28px;
+    padding: 4px 10px;
+    border: 1px solid transparent;
+    border-radius: var(--gc-radius);
+    font: inherit;
+    cursor: pointer;
+}
+
+.gc-button-small {
+    min-height: 26px;
+    padding: 3px 8px;
+    font-size: 12px;
+}
+
+.gc-button-primary {
+    color: var(--gc-button-fg);
+    background: var(--gc-button-bg);
+}
+
+.gc-button-primary:hover {
+    background: var(--gc-button-hover-bg);
+}
+
+.gc-button-secondary {
+    border-color: var(--gc-border);
+    color: var(--gc-secondary-button-fg);
+    background: var(--gc-secondary-button-bg);
+}
+
+.gc-button-secondary:hover,
+.gc-button-ghost:hover {
+    background: var(--gc-secondary-button-hover-bg);
+}
+
+.gc-button-ghost {
+    color: var(--gc-secondary-button-fg);
+    background: transparent;
+}
+
+.gc-badge {
+    display: inline-flex;
+    align-items: center;
+    min-height: 22px;
+    padding: 2px 7px;
+    border: 1px solid var(--gc-border);
+    border-radius: 999px;
+    font-size: 12px;
+    line-height: 1.2;
+    white-space: nowrap;
+}
+
+.gc-badge-neutral {
+    color: var(--gc-muted);
+}
+
+.gc-badge-changed {
+    border-color: var(--gc-warning-border);
+    color: var(--gc-foreground);
+    background: var(--gc-warning-bg);
+}
+
+.gc-loading {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--gc-muted);
+}
+
+.gc-loading-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: var(--gc-muted);
+    animation: gc-pulse 1.2s ease-in-out infinite;
+}
+
+.gc-tooltip {
+    max-width: min(560px, calc(100vw - 32px));
+    padding: 6px 8px;
+    border: 1px solid var(--gc-border);
+    border-radius: var(--gc-radius);
+    color: var(--gc-foreground);
+    background: var(--gc-elevated-bg);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+    font-size: 12px;
+    word-break: break-all;
+    z-index: 10;
+}
+
+@keyframes gc-pulse {
+    0%, 100% {
+        opacity: 0.35;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+@media (max-width: 760px) {
+    .gc-root {
+        display: block;
+    }
+
+    .gc-sidebar {
+        width: 100%;
+        min-height: auto;
+        border-right: 0;
+        border-bottom: 1px solid var(--gc-border);
+    }
+
+    .gc-scroll-root {
+        height: auto;
+    }
+
+    .gc-main {
+        min-height: auto;
+    }
+
+    .gc-main-inner {
+        padding: 18px 16px 36px;
+    }
+
+    .gc-nav-list {
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    }
+
+    .gc-page-header {
+        display: grid;
+    }
+}
