@@ -1,10 +1,13 @@
 import React, { KeyboardEvent, useEffect, useMemo, useState } from "react";
+import { buildConfigValueTypeMap } from "../../chord/specOptions";
+import type { ConfigValueType } from "../../chord/specOptions";
 import LoadingScreen from "../general/LoadingScreen";
 import { useGlobalContext } from "../state/context";
 import { buildContentCacheKey, repoContentScope, writeCachedContent } from "../state/contentCache";
 import { GlobalStateInterface, useGlobalStore } from "../state/state";
 import useCachedGitChordText from "../state/useCachedGitChordText";
-import { Badge, Button, EmptyState, Page } from "../ui/Page";
+import { Badge, EmptyState, IconButton, Page } from "../ui/Page";
+import { useTranslation } from "../../i18n/useTranslation";
 
 interface ConfigEntry {
     key: string,
@@ -16,6 +19,7 @@ const CONFIG_OVERRIDES_PARAMS = ["list", "--no-cascade", "--no-color"];
 
 export default function Config() {
     const { gitChord, pageGroup } = useGlobalContext();
+    const { t } = useTranslation();
     const update = useGlobalStore((state) => state.update);
     const repoRoot = pageGroup.type === "repo" ? pageGroup.repoRoot : null;
     const scope = repoRoot === null ? null : repoContentScope(repoRoot);
@@ -31,6 +35,15 @@ export default function Config() {
         params: CONFIG_OVERRIDES_PARAMS,
         outputKey: "repoConfigOverrides",
     });
+    const specOptionsText = useCachedGitChordText({
+        scope: "global",
+        method: "specOptions",
+        outputKey: "specOptions",
+    });
+    const valueTypes = useMemo(
+        () => buildConfigValueTypeMap(specOptionsText ?? ""),
+        [specOptionsText],
+    );
     const [entries, setEntries] = useState<ConfigEntry[]>([]);
     const [overrideKeys, setOverrideKeys] = useState<Set<string>>(new Set());
     const [editingKey, setEditingKey] = useState<string | null>(null);
@@ -60,15 +73,15 @@ export default function Config() {
 
     if (!repoRoot) {
         return (
-            <Page title="Repository Config">
-                <EmptyState title="No Git repository context is available." />
+            <Page title={t("config.title")}>
+                <EmptyState title={t("repo.noContextAvailable")} />
             </Page>
         );
     }
 
-    if (configText === null || overrideText === null) {
+    if (configText === null || overrideText === null || specOptionsText === null) {
         return (
-            <Page title="Repository Config" description={repoRoot}>
+            <Page title={t("config.title")} description={repoRoot}>
                 <LoadingScreen />
             </Page>
         );
@@ -76,15 +89,15 @@ export default function Config() {
 
     if (configText === "") {
         return (
-            <Page title="Repository Config" description={repoRoot}>
-                <EmptyState title="Failed to load repository config." />
+            <Page title={t("config.title")} description={repoRoot}>
+                <EmptyState title={t("config.failed")} />
             </Page>
         );
     }
 
     function startEdit(entry: ConfigEntry) {
         setEditingKey(entry.key);
-        setEditingValue(entry.value);
+        setEditingValue(valueTypes.get(entry.key) === "boolean" ? normalizeBooleanValue(entry.value) : entry.value);
     }
 
     function cancelEdit() {
@@ -111,7 +124,21 @@ export default function Config() {
         writeConfigState(nextEntries, nextOverrideKeys);
     }
 
-    function handleEditKeyDown(event: KeyboardEvent<HTMLInputElement>, key: string) {
+    function resetOverride(key: string) {
+        if (!overrideKeys.has(key)) {
+            return;
+        }
+
+        const nextOverrideKeys = new Set(overrideKeys);
+        nextOverrideKeys.delete(key);
+        setOverrideKeys(nextOverrideKeys);
+        if (editingKey === key) {
+            cancelEdit();
+        }
+        void gitChord.configReset(key).then(refreshFromCli);
+    }
+
+    function handleEditKeyDown(event: KeyboardEvent<HTMLInputElement | HTMLSelectElement>, key: string) {
         if (event.key === "Enter") {
             event.preventDefault();
             saveEdit(key);
@@ -151,60 +178,67 @@ export default function Config() {
     }
 
     return (
-        <Page title="Repository Config" description={repoRoot}>
+        <Page title={t("config.title")} description={repoRoot}>
             <div className="gc-table-wrap">
                 <table className="gc-config-table">
                     <thead>
                         <tr>
-                            <th>Key</th>
-                            <th>Value</th>
-                            <th>Status</th>
-                            <th>Action</th>
+                            <th>{t("config.key")}</th>
+                            <th>{t("config.value")}</th>
+                            <th>{t("config.status")}</th>
+                            <th>{t("common.action")}</th>
                         </tr>
                     </thead>
                     <tbody>
                         {entries.map(entry => {
                             const isEditing = editingKey === entry.key;
                             const isOverridden = overrideKeys.has(entry.key);
+                            const valueType = valueTypes.get(entry.key) ?? "text";
                             return (
                                 <tr key={entry.key}>
                                     <td><code className="gc-code">{entry.key}</code></td>
                                     <td className="gc-config-value">
                                         {isEditing ? (
-                                            <input
-                                                autoFocus
-                                                className="gc-input"
-                                                type="text"
-                                                value={editingValue}
-                                                onChange={event => setEditingValue(event.target.value)}
-                                                onKeyDown={event => handleEditKeyDown(event, entry.key)}
-                                            />
+                                            renderConfigValueEditor(
+                                                valueType,
+                                                editingValue,
+                                                setEditingValue,
+                                                event => handleEditKeyDown(event, entry.key),
+                                            )
                                         ) : (
                                             <code className="gc-code">{entry.value}</code>
                                         )}
                                     </td>
                                     <td>
                                         {isOverridden ? (
-                                            <Badge tone="changed">overridden</Badge>
+                                            <Badge tone="changed">{t("config.overridden")}</Badge>
                                         ) : (
-                                            <span className="gc-muted">default</span>
+                                            <span className="gc-muted">{t("config.default")}</span>
                                         )}
                                     </td>
                                     <td>
                                         <div className="gc-config-actions">
                                             {isEditing ? (
                                                 <>
-                                                    <Button type="button" variant="primary" size="small" onClick={() => saveEdit(entry.key)}>
-                                                        Override
-                                                    </Button>
-                                                    <Button type="button" variant="ghost" size="small" onClick={cancelEdit}>
-                                                        Cancel
-                                                    </Button>
+                                                    <IconButton type="button" variant="primary" size="small" label={t("config.override")} onClick={() => saveEdit(entry.key)}>
+                                                        ✓
+                                                    </IconButton>
+                                                    <IconButton type="button" variant="ghost" size="small" label={t("common.cancel")} onClick={cancelEdit}>
+                                                        ×
+                                                    </IconButton>
+                                                    <IconButton type="button" variant="ghost" size="small" label={t("config.resetOverride")} disabled={!isOverridden} onClick={() => resetOverride(entry.key)}>
+                                                        ↺
+                                                    </IconButton>
                                                 </>
                                             ) : (
-                                                <Button type="button" size="small" onClick={() => startEdit(entry)}>
-                                                    Edit
-                                                </Button>
+                                                <>
+                                                    <IconButton type="button" size="small" label={t("config.edit")} onClick={() => startEdit(entry)}>
+                                                        ✎
+                                                    </IconButton>
+                                                    <IconButton type="button" variant="ghost" size="small" label={t("config.resetOverride")} disabled={!isOverridden} onClick={() => resetOverride(entry.key)}>
+                                                        ↺
+                                                    </IconButton>
+                                                </>
                                             )}
                                         </div>
                                     </td>
@@ -216,6 +250,43 @@ export default function Config() {
             </div>
         </Page>
     );
+}
+
+function renderConfigValueEditor(
+    valueType: ConfigValueType,
+    value: string,
+    onChange: (value: string) => void,
+    onKeyDown: (event: KeyboardEvent<HTMLInputElement | HTMLSelectElement>) => void,
+) {
+    if (valueType === "boolean") {
+        return (
+            <select
+                autoFocus
+                className="gc-input"
+                value={normalizeBooleanValue(value)}
+                onChange={event => onChange(event.target.value)}
+                onKeyDown={onKeyDown}
+            >
+                <option value="true">true</option>
+                <option value="false">false</option>
+            </select>
+        );
+    }
+
+    return (
+        <input
+            autoFocus
+            className="gc-input"
+            type="text"
+            value={value}
+            onChange={event => onChange(event.target.value)}
+            onKeyDown={onKeyDown}
+        />
+    );
+}
+
+function normalizeBooleanValue(value: string): "true" | "false" {
+    return value === "true" ? "true" : "false";
 }
 
 function parseConfigList(output: string): ConfigEntry[] {

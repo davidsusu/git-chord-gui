@@ -1,32 +1,5 @@
 body {
     margin: 0;
-    --gc-font-family: var(--vscode-font-family, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
-    --gc-font-size: var(--vscode-font-size, 13px);
-    --gc-bg: var(--vscode-editor-background, #ffffff);
-    --gc-panel-bg: var(--vscode-sideBar-background, #f6f8fa);
-    --gc-elevated-bg: var(--vscode-editorWidget-background, #ffffff);
-    --gc-foreground: var(--vscode-foreground, #24292f);
-    --gc-muted: var(--vscode-descriptionForeground, #57606a);
-    --gc-border: var(--vscode-panel-border, rgba(31, 35, 40, 0.14));
-    --gc-hover-bg: var(--vscode-list-hoverBackground, rgba(208, 215, 222, 0.35));
-    --gc-active-bg: var(--vscode-list-activeSelectionBackground, #0969da);
-    --gc-active-fg: var(--vscode-list-activeSelectionForeground, #ffffff);
-    --gc-focus: var(--vscode-focusBorder, #0969da);
-    --gc-input-bg: var(--vscode-input-background, #ffffff);
-    --gc-input-fg: var(--vscode-input-foreground, var(--gc-foreground));
-    --gc-input-border: var(--vscode-input-border, var(--gc-border));
-    --gc-button-bg: var(--vscode-button-background, #0969da);
-    --gc-button-fg: var(--vscode-button-foreground, #ffffff);
-    --gc-button-hover-bg: var(--vscode-button-hoverBackground, #0757b8);
-    --gc-secondary-button-bg: var(--vscode-button-secondaryBackground, transparent);
-    --gc-secondary-button-fg: var(--vscode-button-secondaryForeground, var(--gc-foreground));
-    --gc-secondary-button-hover-bg: var(--vscode-button-secondaryHoverBackground, var(--gc-hover-bg));
-    --gc-code-bg: var(--vscode-textCodeBlock-background, rgba(175, 184, 193, 0.18));
-    --gc-link-fg: var(--vscode-textLink-foreground, #0969da);
-    --gc-warning-bg: var(--vscode-inputValidation-warningBackground, rgba(154, 103, 0, 0.14));
-    --gc-warning-border: var(--vscode-inputValidation-warningBorder, rgba(154, 103, 0, 0.45));
-    --gc-radius: 6px;
-    --gc-sidebar-width: 260px;
 }
 
 .gc-root {
@@ -55,6 +28,18 @@ body {
     --gc-link-fg: var(--vscode-textLink-foreground, #0969da);
     --gc-warning-bg: var(--vscode-inputValidation-warningBackground, rgba(154, 103, 0, 0.14));
     --gc-warning-border: var(--vscode-inputValidation-warningBorder, rgba(154, 103, 0, 0.45));
+    --gc-danger-fg: var(--vscode-errorForeground, #cf222e);
+    --gc-danger-bg: color-mix(in srgb, var(--gc-danger-fg) 11%, transparent);
+    --gc-danger-border: color-mix(in srgb, var(--gc-danger-fg) 46%, transparent);
+    --gc-syntax-keyword: #cf222e;
+    --gc-syntax-string: #0a7f3f;
+    --gc-syntax-number: #0550ae;
+    --gc-syntax-title: #8250df;
+    --gc-syntax-attribute: #953800;
+    --gc-syntax-comment: #6e7781;
+    --gc-syntax-meta: #57606a;
+    --gc-syntax-deletion: #cf222e;
+    --gc-syntax-addition: #1a7f37;
     --gc-radius: 6px;
     --gc-sidebar-width: 260px;
 
@@ -67,28 +52,33 @@ body {
     line-height: 1.45;
 }
 
-@media (prefers-color-scheme: dark) {
-    body {
-        --gc-bg: var(--vscode-editor-background, #1f1f1f);
-        --gc-panel-bg: var(--vscode-sideBar-background, #181818);
-        --gc-elevated-bg: var(--vscode-editorWidget-background, #252526);
-        --gc-foreground: var(--vscode-foreground, #cccccc);
-        --gc-muted: var(--vscode-descriptionForeground, #9d9d9d);
-        --gc-border: var(--vscode-panel-border, rgba(255, 255, 255, 0.14));
-        --gc-hover-bg: var(--vscode-list-hoverBackground, rgba(255, 255, 255, 0.08));
-        --gc-code-bg: var(--vscode-textCodeBlock-background, rgba(255, 255, 255, 0.08));
-    }
-
-    .gc-root {
-        --gc-bg: var(--vscode-editor-background, #1f1f1f);
-        --gc-panel-bg: var(--vscode-sideBar-background, #181818);
-        --gc-elevated-bg: var(--vscode-editorWidget-background, #252526);
-        --gc-foreground: var(--vscode-foreground, #cccccc);
-        --gc-muted: var(--vscode-descriptionForeground, #9d9d9d);
-        --gc-border: var(--vscode-panel-border, rgba(255, 255, 255, 0.14));
-        --gc-hover-bg: var(--vscode-list-hoverBackground, rgba(255, 255, 255, 0.08));
-        --gc-code-bg: var(--vscode-textCodeBlock-background, rgba(255, 255, 255, 0.08));
-    }
+.gc-root[data-theme="dark"] {
+    --gc-bg: var(--vscode-editor-background, #1f1f1f);
+    --gc-panel-bg: var(--vscode-sideBar-background, #181818);
+    --gc-elevated-bg: var(--vscode-editorWidget-background, #252526);
+    --gc-foreground: var(--vscode-foreground, #cccccc);
+    --gc-muted: var(--vscode-descriptionForeground, #9d9d9d);
+    --gc-border: var(--vscode-panel-border, rgba(255, 255, 255, 0.14));
+    --gc-hover-bg: var(--vscode-list-hoverBackground, rgba(255, 255, 255, 0.08));
+    --gc-active-bg: var(--vscode-list-activeSelectionBackground, #0e639c);
+    --gc-focus: var(--vscode-focusBorder, #007fd4);
+    --gc-input-bg: var(--vscode-input-background, #1f1f1f);
+    --gc-button-bg: var(--vscode-button-background, #0e639c);
+    --gc-button-hover-bg: var(--vscode-button-hoverBackground, #1177bb);
+    --gc-code-bg: var(--vscode-textCodeBlock-background, rgba(255, 255, 255, 0.08));
+    --gc-link-fg: var(--vscode-textLink-foreground, #4daafc);
+    --gc-warning-bg: var(--vscode-inputValidation-warningBackground, rgba(154, 103, 0, 0.18));
+    --gc-warning-border: var(--vscode-inputValidation-warningBorder, rgba(154, 103, 0, 0.58));
+    --gc-danger-fg: var(--vscode-errorForeground, #f48771);
+    --gc-syntax-keyword: #ff7b72;
+    --gc-syntax-string: #7ee787;
+    --gc-syntax-number: #79c0ff;
+    --gc-syntax-title: #d2a8ff;
+    --gc-syntax-attribute: #ffa657;
+    --gc-syntax-comment: #8b949e;
+    --gc-syntax-meta: #a5d6ff;
+    --gc-syntax-deletion: #ffa198;
+    --gc-syntax-addition: #7ee787;
 }
 
 .gc-root * {
@@ -107,6 +97,7 @@ body {
     flex: 1;
     min-width: 0;
     min-height: 100vh;
+    position: relative;
     background: var(--gc-bg);
 }
 
@@ -146,7 +137,78 @@ body {
 }
 
 .gc-sidebar-inner {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
     padding: 16px 14px;
+}
+
+.gc-sidebar-content {
+    flex: 1 1 auto;
+}
+
+.gc-sidebar-footer {
+    flex: 0 0 auto;
+    padding-top: 16px;
+    margin-top: 16px;
+    border-top: 1px solid var(--gc-border);
+}
+
+.gc-language-switcher {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.gc-language-button {
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 28px;
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: var(--gc-radius);
+    background: transparent;
+    font: inherit;
+    cursor: pointer;
+}
+
+.gc-theme-switcher {
+    position: absolute;
+    top: 14px;
+    right: 18px;
+    z-index: 2;
+    display: flex;
+    gap: 4px;
+    padding: 3px;
+    border: 1px solid var(--gc-border);
+    border-radius: var(--gc-radius);
+    background: var(--gc-elevated-bg);
+}
+
+.gc-theme-button {
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 28px;
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: calc(var(--gc-radius) - 2px);
+    color: var(--gc-foreground);
+    background: transparent;
+    font: inherit;
+    cursor: pointer;
+}
+
+.gc-language-button:hover,
+.gc-theme-button:hover {
+    background: var(--gc-hover-bg);
+}
+
+.gc-language-button[data-active="true"],
+.gc-theme-button[data-active="true"] {
+    border-color: color-mix(in srgb, var(--gc-active-bg) 42%, transparent);
+    background: var(--gc-hover-bg);
 }
 
 .gc-brand {
@@ -266,7 +328,11 @@ body {
 .gc-nav-item:focus-visible,
 .gc-button:focus-visible,
 .gc-input:focus-visible,
-.gc-context-card:focus-visible {
+.gc-context-card:focus-visible,
+.gc-language-button:focus-visible,
+.gc-theme-button:focus-visible,
+.gc-code-link:focus-visible,
+.gc-commit-link:focus-visible {
     outline: 1px solid var(--gc-focus);
     outline-offset: 1px;
 }
@@ -279,8 +345,12 @@ body {
 
 .gc-main-inner {
     width: 100%;
-    max-width: 1120px;
+    max-width: none;
     padding: 24px 28px 48px;
+}
+
+.gc-root[data-theme-switcher="true"] .gc-main-inner {
+    padding-top: 56px;
 }
 
 .gc-page {
@@ -349,6 +419,10 @@ body {
 }
 
 .gc-markdown {
+    max-width: none;
+}
+
+.gc-markdown > :not(pre) {
     max-width: 84ch;
 }
 
@@ -372,12 +446,14 @@ body {
 
 .gc-markdown code,
 .gc-code,
+.gc-highlighted-code,
 .gc-code-output {
     font-family: var(--vscode-editor-font-family, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace);
 }
 
 .gc-markdown pre,
 .gc-code-output {
+    width: 100%;
     overflow: auto;
     padding: 12px;
     border: 1px solid var(--gc-border);
@@ -390,7 +466,81 @@ body {
     margin: 0;
 }
 
+.gc-highlighted-code {
+    color: var(--gc-foreground);
+}
+
+.gc-highlighted-code .hljs-keyword,
+.gc-highlighted-code .hljs-selector-tag,
+.gc-highlighted-code .hljs-literal,
+.gc-highlighted-code .hljs-built_in,
+.gc-highlighted-code .hljs-name {
+    color: var(--gc-syntax-keyword);
+}
+
+.gc-highlighted-code .hljs-string,
+.gc-highlighted-code .hljs-regexp,
+.gc-highlighted-code .hljs-symbol,
+.gc-highlighted-code .hljs-bullet {
+    color: var(--gc-syntax-string);
+}
+
+.gc-highlighted-code .hljs-number,
+.gc-highlighted-code .hljs-variable,
+.gc-highlighted-code .hljs-template-variable {
+    color: var(--gc-syntax-number);
+}
+
+.gc-highlighted-code .hljs-title,
+.gc-highlighted-code .hljs-section,
+.gc-highlighted-code .hljs-selector-id {
+    color: var(--gc-syntax-title);
+}
+
+.gc-highlighted-code .hljs-attr,
+.gc-highlighted-code .hljs-attribute,
+.gc-highlighted-code .hljs-selector-class {
+    color: var(--gc-syntax-attribute);
+}
+
+.gc-highlighted-code .hljs-comment,
+.gc-highlighted-code .hljs-quote {
+    color: var(--gc-syntax-comment);
+}
+
+.gc-highlighted-code .hljs-meta {
+    color: var(--gc-syntax-meta);
+}
+
+.gc-highlighted-code .hljs-deletion {
+    color: var(--gc-syntax-deletion);
+}
+
+.gc-highlighted-code .hljs-addition {
+    color: var(--gc-syntax-addition);
+}
+
+.gc-code-link,
+.gc-commit-link {
+    padding: 0;
+    border: 0;
+    color: var(--gc-link-fg);
+    background: transparent;
+    font: inherit;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
+    cursor: pointer;
+}
+
+.gc-code-link:hover,
+.gc-commit-link:hover {
+    color: var(--gc-link-fg);
+    background: color-mix(in srgb, var(--gc-link-fg) 10%, transparent);
+}
+
 .gc-table-wrap {
+    width: 100%;
     overflow: auto;
     border: 1px solid var(--gc-border);
     border-radius: var(--gc-radius);
@@ -435,6 +585,267 @@ body {
     gap: 6px;
 }
 
+.gc-snapshot-table-wrap {
+    background: var(--gc-elevated-bg);
+}
+
+.gc-snapshot-table {
+    min-width: 720px;
+}
+
+.gc-snapshot-table th:first-child,
+.gc-snapshot-table td:first-child {
+    width: 10rem;
+}
+
+.gc-snapshot-table th:last-child,
+.gc-snapshot-table td:last-child {
+    width: 14rem;
+    text-align: right;
+}
+
+.gc-commit-code {
+    white-space: nowrap;
+}
+
+.gc-snapshot-title {
+    font-weight: 650;
+}
+
+.gc-snapshot-message {
+    margin-top: 2px;
+    color: var(--gc-muted);
+    font-size: 12px;
+}
+
+.gc-snapshot-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 6px;
+}
+
+.gc-state-options {
+    display: grid;
+    gap: 10px;
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--gc-border);
+    border-radius: var(--gc-radius);
+    background: var(--gc-elevated-bg);
+}
+
+.gc-state-options-toolbar,
+.gc-state-options-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+}
+
+.gc-state-options-collapse-row {
+    display: flex;
+    justify-content: center;
+    padding-top: 2px;
+}
+
+.gc-state-options-select {
+    flex: 1 1 22rem;
+    width: auto;
+}
+
+.gc-state-options .gc-input {
+    min-width: min(18rem, 100%);
+}
+
+.gc-state-options-table {
+    min-width: 620px;
+}
+
+.gc-state-options-table td:first-child {
+    width: 16rem;
+}
+
+.gc-state-options-collapsed {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+}
+
+.gc-state-result {
+    margin-top: 18px;
+}
+
+.gc-cli-preview-row {
+    display: flex;
+    min-width: 0;
+    gap: 8px;
+    align-items: center;
+}
+
+.gc-cli-preview {
+    display: block;
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: auto;
+    padding: 7px 9px;
+    border: 1px solid var(--gc-border);
+    border-radius: var(--gc-radius);
+    background: var(--gc-code-bg);
+    white-space: nowrap;
+}
+
+.gc-state-output {
+    position: relative;
+    width: 100%;
+    border: 1px solid var(--gc-border);
+    border-radius: var(--gc-radius);
+    background: var(--gc-elevated-bg);
+}
+
+.gc-state-output-body {
+    position: relative;
+    overflow: hidden;
+    transition: max-height 160ms ease;
+}
+
+.gc-state-output[data-expanded="false"] .gc-state-output-body {
+    max-height: calc(2.9em + 24px);
+}
+
+.gc-state-output-header {
+    padding: 12px 44px 10px 12px;
+    border-bottom: 1px solid var(--gc-border);
+}
+
+.gc-state-output-title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 650;
+    line-height: 1.25;
+}
+
+.gc-state-output-code {
+    display: block;
+    width: 100%;
+    min-height: calc(2.9em + 24px);
+    max-height: 70vh;
+    overflow: auto;
+    padding: 12px;
+    margin: 0;
+    border: 0;
+    background: var(--gc-code-bg);
+    white-space: pre-wrap;
+}
+
+.gc-state-output-copy {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-2px);
+    transition: opacity 120ms ease, transform 120ms ease;
+    z-index: 2;
+}
+
+.gc-state-output:hover .gc-state-output-copy,
+.gc-state-output:focus-within .gc-state-output-copy,
+.gc-state-output-copy.gc-icon-button-copied {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+}
+
+.gc-state-output-fade {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: calc(1.4em + 14px);
+    background: linear-gradient(
+        to bottom,
+        transparent 0%,
+        color-mix(in srgb, var(--gc-code-bg) 74%, transparent) 58%,
+        var(--gc-code-bg) 100%
+    );
+    pointer-events: none;
+}
+
+.gc-state-output-toggle-row {
+    display: flex;
+    justify-content: center;
+    padding: 0 0 7px;
+}
+
+.gc-state-output-toggle {
+    margin-top: -2px;
+}
+
+.gc-state-action-row {
+    display: flex;
+    margin-top: 12px;
+}
+
+.gc-button-inline-icon {
+    margin-right: 6px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.gc-snapshot-create-form {
+    display: grid;
+    gap: 12px;
+    width: 100%;
+    margin-top: 12px;
+    padding: 12px;
+    border: 1px solid var(--gc-border);
+    border-radius: var(--gc-radius);
+    background: var(--gc-elevated-bg);
+}
+
+.gc-snapshot-create-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.gc-snapshot-create-title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 650;
+    line-height: 1.25;
+}
+
+.gc-snapshot-target-grid {
+    display: grid;
+    grid-template-columns: minmax(12rem, 0.45fr) minmax(18rem, 1fr);
+    gap: 10px;
+}
+
+.gc-field {
+    display: grid;
+    gap: 5px;
+}
+
+.gc-field-label {
+    color: var(--gc-muted);
+    font-size: 12px;
+    font-weight: 650;
+}
+
+.gc-snapshot-target-preview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    padding: 8px 10px;
+    border: 1px solid var(--gc-border);
+    border-radius: var(--gc-radius);
+    background: var(--gc-code-bg);
+}
+
 .gc-input {
     width: 100%;
     min-width: 18rem;
@@ -456,10 +867,43 @@ body {
     cursor: pointer;
 }
 
+.gc-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.58;
+}
+
 .gc-button-small {
     min-height: 26px;
     padding: 3px 8px;
     font-size: 12px;
+}
+
+.gc-icon-button {
+    display: inline-grid;
+    place-items: center;
+    width: 30px;
+    min-width: 30px;
+    padding: 0;
+}
+
+.gc-icon-button.gc-button-small {
+    width: 26px;
+    min-width: 26px;
+    padding: 0;
+}
+
+.gc-button-icon {
+    font-size: 15px;
+    line-height: 1;
+}
+
+.gc-button-small .gc-button-icon {
+    font-size: 13px;
+}
+
+.gc-icon-button-copied {
+    border-color: var(--gc-focus);
+    animation: gc-copy-confirm 900ms ease;
 }
 
 .gc-button-primary {
@@ -485,6 +929,15 @@ body {
 .gc-button-ghost {
     color: var(--gc-secondary-button-fg);
     background: transparent;
+}
+
+.gc-button-danger {
+    border-color: var(--gc-danger-border);
+    color: var(--gc-danger-fg);
+}
+
+.gc-button-danger:hover:not(:disabled) {
+    background: var(--gc-danger-bg);
 }
 
 .gc-badge {
@@ -537,12 +990,74 @@ body {
     z-index: 10;
 }
 
+.gc-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    background: rgba(0, 0, 0, 0.28);
+}
+
+.gc-modal {
+    display: grid;
+    gap: 12px;
+    width: min(440px, 100%);
+    padding: 16px;
+    border: 1px solid var(--gc-border);
+    border-radius: var(--gc-radius);
+    color: var(--gc-foreground);
+    background: var(--gc-elevated-bg);
+    box-shadow: 0 14px 38px rgba(0, 0, 0, 0.28);
+}
+
+.gc-modal-title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 650;
+}
+
+.gc-modal-text {
+    margin: 0;
+}
+
+.gc-modal-error {
+    padding: 8px 10px;
+    border: 1px solid var(--gc-danger-border);
+    border-radius: var(--gc-radius);
+    color: var(--gc-danger-fg);
+    background: var(--gc-danger-bg);
+}
+
+.gc-modal-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
 @keyframes gc-pulse {
     0%, 100% {
         opacity: 0.35;
     }
     50% {
         opacity: 1;
+    }
+}
+
+@keyframes gc-copy-confirm {
+    0% {
+        box-shadow: 0 0 0 0 color-mix(in srgb, var(--gc-focus) 42%, transparent);
+        transform: scale(1);
+    }
+    28% {
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--gc-focus) 20%, transparent);
+        transform: scale(1.06);
+    }
+    100% {
+        box-shadow: 0 0 0 0 transparent;
+        transform: scale(1);
     }
 }
 
@@ -576,5 +1091,17 @@ body {
 
     .gc-page-header {
         display: grid;
+    }
+
+    .gc-state-options-collapsed {
+        grid-template-columns: 1fr;
+    }
+
+    .gc-cli-preview-row {
+        width: 100%;
+    }
+
+    .gc-snapshot-target-grid {
+        grid-template-columns: 1fr;
     }
 }

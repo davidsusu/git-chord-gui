@@ -3,8 +3,10 @@ import {
     CommandResult,
     GitChordContext,
     GitChordGui,
+    normalizeLanguage,
+    translate,
 } from '@git-chord/gui-core';
-import type { CommandExecutorInterface, PageGroup, PageOpenRequest } from '@git-chord/gui-core';
+import type { CommandExecutorInterface, LanguageCode, PageGroup, PageIntent, PageOpenRequest } from '@git-chord/gui-core';
 import React, { useEffect } from 'react'
 import { createRoot } from 'react-dom/client'
 import { ErrorBoundary } from 'react-error-boundary';
@@ -17,6 +19,9 @@ declare global {
         __GIT_CHORD_INITIAL_STATE__?: {
             group?: PageGroup;
             path?: string;
+            intent?: PageIntent;
+            currentRepoRoot?: string | null;
+            language?: LanguageCode;
         };
     }
 }
@@ -29,6 +34,10 @@ type PendingRequest = {
 type ExecResultMessage = {
     type?: string;
     id?: string;
+    path?: string;
+    intent?: PageIntent;
+    repoRoot?: string | null;
+    language?: unknown;
     result?: {
         status?: number;
         stdout?: string;
@@ -44,7 +53,7 @@ class VsCodeCommandExecutor implements CommandExecutorInterface {
 
     private nextRequestId = 1;
 
-    constructor() {
+    constructor(private readonly getLanguage: () => LanguageCode) {
         window.addEventListener('message', event => {
             this.handleMessage(event.data as ExecResultMessage);
         });
@@ -58,7 +67,7 @@ class VsCodeCommandExecutor implements CommandExecutorInterface {
                 return;
             }
             this.pendingRequests.delete(id);
-            pendingRequest.resolve(new CommandResult(1, '', 'Timed out while executing git chord command.'));
+            pendingRequest.resolve(new CommandResult(1, '', translate(this.getLanguage(), 'extension.timeout')));
         }, 30000);
 
         return new Promise(resolve => {
@@ -69,6 +78,18 @@ class VsCodeCommandExecutor implements CommandExecutorInterface {
 
     openPage(request: PageOpenRequest) {
         this.vscode.postMessage({ type: 'openPage', request });
+    }
+
+    requestRepoContext() {
+        this.vscode.postMessage({ type: 'requestRepoContext' });
+    }
+
+    setLanguage(language: LanguageCode) {
+        this.vscode.postMessage({ type: 'setLanguage', language });
+    }
+
+    openCommit(commitId: string) {
+        this.vscode.postMessage({ type: 'openCommit', commitId });
     }
 
     private handleMessage(message: ExecResultMessage) {
@@ -94,35 +115,59 @@ class VsCodeCommandExecutor implements CommandExecutorInterface {
 
 }
 
-const commandExecutor = new VsCodeCommandExecutor();
-const gitChord = new CommandExecutorGitChord(commandExecutor);
 const initialState = window.__GIT_CHORD_INITIAL_STATE__ ?? {};
+let activeLanguage = normalizeLanguage(initialState.language);
+const commandExecutor = new VsCodeCommandExecutor(() => activeLanguage);
+const gitChord = new CommandExecutorGitChord(commandExecutor);
 const pageGroup = initialState.group ?? { type: 'global' as const };
 const initialPath = initialState.path ?? '/';
+const initialEntry = initialState.intent ? { pathname: initialPath, state: { intent: initialState.intent } } : initialPath;
 
-function HostNavigation() {
+function HostBridge({
+    language,
+    onLanguageChange,
+    onRepoContextChange,
+}: {
+    language: LanguageCode,
+    onLanguageChange: (language: LanguageCode) => void,
+    onRepoContextChange: (repoRoot: string | null) => void,
+}) {
     const navigate = useNavigate();
 
     useEffect(() => {
+        activeLanguage = language;
+        document.documentElement.lang = language;
+    }, [language]);
+
+    useEffect(() => {
         function handleMessage(event: MessageEvent) {
-            const message = event.data as { type?: string, path?: string };
+            const message = event.data as ExecResultMessage;
             if (message.type === 'navigate' && typeof message.path === 'string') {
-                navigate(message.path);
+                navigate(message.path, message.intent ? { state: { intent: message.intent } } : undefined);
+            } else if (message.type === 'repoContext') {
+                onRepoContextChange(typeof message.repoRoot === 'string' ? message.repoRoot : null);
+            } else if (message.type === 'language') {
+                onLanguageChange(normalizeLanguage(message.language));
             }
         }
 
         window.addEventListener('message', handleMessage);
         return () => window.removeEventListener('message', handleMessage);
-    }, [navigate]);
+    }, [navigate, onLanguageChange, onRepoContextChange]);
+
+    useEffect(() => {
+        commandExecutor.requestRepoContext();
+    }, []);
 
     return null;
 }
 
 function fallbackRender(props: any) {
     const error = props.error as Error;
+    const language = activeLanguage;
     return (
         <div role="alert">
-        <p>Something went wrong:</p>
+        <p>{translate(language, 'errorBoundary.heading')}</p>
         <pre style={{ color: "red" }}>{error.name}</pre>
         <hr />
         <pre style={{ color: "red" }}>{error.message}</pre>
@@ -131,14 +176,46 @@ function fallbackRender(props: any) {
         </div>
     );
 }
-  
-createRoot(document.getElementById('root')!).render(
-    <ErrorBoundary fallbackRender={fallbackRender}>
-        <GitChordContext.Provider value={{ gitChord, pageGroup, openPage: request => commandExecutor.openPage(request) }}>
-            <MemoryRouter initialEntries={[initialPath]}>
-                <HostNavigation />
+
+function App() {
+    const [currentRepoRoot, setCurrentRepoRoot] = React.useState<string | null | undefined>(initialState.currentRepoRoot);
+    const [language, setLanguage] = React.useState<LanguageCode>(normalizeLanguage(initialState.language));
+
+    function changeLanguage(nextLanguage: LanguageCode) {
+        const normalizedLanguage = normalizeLanguage(nextLanguage);
+        activeLanguage = normalizedLanguage;
+        setLanguage(normalizedLanguage);
+        commandExecutor.setLanguage(normalizedLanguage);
+    }
+
+    return (
+        <GitChordContext.Provider value={{
+            gitChord,
+            pageGroup,
+            currentRepoRoot,
+            language,
+            onLanguageChange: changeLanguage,
+            onCommitOpen: commitId => commandExecutor.openCommit(commitId),
+            openPage: request => commandExecutor.openPage(request),
+            uiControls: {
+                languageSwitcher: true,
+                themeSwitcher: false,
+            },
+        }}>
+            <MemoryRouter initialEntries={[initialEntry]}>
+                <HostBridge
+                    language={language}
+                    onLanguageChange={setLanguage}
+                    onRepoContextChange={setCurrentRepoRoot}
+                />
                 <GitChordGui />
             </MemoryRouter>
         </GitChordContext.Provider>
+    );
+}
+  
+createRoot(document.getElementById('root')!).render(
+    <ErrorBoundary fallbackRender={fallbackRender}>
+        <App />
     </ErrorBoundary>
 );

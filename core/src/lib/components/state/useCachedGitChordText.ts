@@ -4,7 +4,7 @@ import { useGlobalContext } from "./context";
 import { buildContentCacheKey, readFreshCachedContent, writeCachedContent } from "./contentCache";
 import { GlobalStateInterface, TextOutputKey, useGlobalStore } from "./state";
 
-type GitChordTextMethod = keyof Pick<GitChordInterface, "version" | "help" | "state" | "config" | "configOverrides" | "list">;
+type GitChordTextMethod = keyof Pick<GitChordInterface, "version" | "help" | "state" | "config" | "configOverrides" | "configAllOverrides" | "list" | "specOptions">;
 
 interface UseCachedGitChordTextArgs {
     scope: string | null,

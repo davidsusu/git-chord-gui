@@ -5,6 +5,7 @@ import { repoContentScope } from "../state/contentCache";
 import { TextOutputKey } from "../state/state";
 import useCachedGitChordText from "../state/useCachedGitChordText";
 import { CodeOutput, EmptyState, Page } from "../ui/Page";
+import { useTranslation } from "../../i18n/useTranslation";
 
 interface RepoTextCommandProps {
     title: string,
@@ -14,6 +15,7 @@ interface RepoTextCommandProps {
 
 export default function RepoTextCommand({ title, outputKey, command }: RepoTextCommandProps) {
     const { pageGroup } = useGlobalContext();
+    const { t } = useTranslation();
     const repoRoot = pageGroup.type === "repo" ? pageGroup.repoRoot : null;
     const output = useCachedGitChordText({
         scope: repoRoot === null ? null : repoContentScope(repoRoot),
@@ -24,7 +26,7 @@ export default function RepoTextCommand({ title, outputKey, command }: RepoTextC
     if (!repoRoot) {
         return (
             <Page title={title}>
-                <EmptyState title="No Git repository context is available." />
+                <EmptyState title={t("repo.noContextAvailable")} />
             </Page>
         );
     }
@@ -40,7 +42,7 @@ export default function RepoTextCommand({ title, outputKey, command }: RepoTextC
     if (output === "") {
         return (
             <Page title={title} description={repoRoot}>
-                <EmptyState title={`Failed to load ${title.toLowerCase()}.`} />
+                <EmptyState title={t("config.failed")} />
             </Page>
         );
     }

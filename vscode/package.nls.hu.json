@@ -1,0 +1,12 @@
+{
+  "gitChord.extension.description": "Git Chord GUI a VS Code-hoz",
+  "gitChord.commands.about": "Git Chord: Névjegy",
+  "gitChord.commands.cliHelp": "Git Chord: CLI súgó",
+  "gitChord.commands.repoState": "Git Chord: Tároló állapota",
+  "gitChord.commands.createSnapshot": "Git Chord: Pillanatkép készítése",
+  "gitChord.config.commandPath": "A git-chord futtatható fájl abszolút útvonala. Ha üres, a bővítmény a PATH-ból futtatja a git chord parancsot.",
+  "gitChord.config.openOnStartup": "A Git Chord panel automatikus megnyitása a bővítmény indulásakor.",
+  "gitChord.config.language": "A Git Chord GUI bővítmény nyelve.",
+  "gitChord.config.language.enUS": "English (US)",
+  "gitChord.config.language.huHU": "Magyar"
+}

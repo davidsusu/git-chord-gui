@@ -1,8 +1,10 @@
 import React from "react";
+import { useTranslation } from "../../i18n/useTranslation";
 import useCachedGitChordText from "../state/useCachedGitChordText";
 import { Page } from "../ui/Page";
 
 export default function About() {
+    const { t } = useTranslation();
     const version = useCachedGitChordText({
         scope: "global",
         method: "version",
@@ -11,14 +13,16 @@ export default function About() {
     });
 
     return (
-        <Page title="About" description="Git Chord GUI.">
+        <Page title={t("about.title")} description={t("about.description")}>
             <dl className="gc-meta-list">
-                <dt>Version</dt>
-                <dd>{version === null ? "Loading..." : (version || "Unavailable")}</dd>
-                <dt>Project</dt>
+                <dt>{t("about.version")}</dt>
+                <dd>{version === null ? t("common.loading") : (version || t("about.unavailable"))}</dd>
+                <dt>{t("about.author")}</dt>
+                <dd>{t("about.authorName")}</dd>
+                <dt>{t("about.project")}</dt>
                 <dd>
-                    <a className="gc-link" href="https://github.com/davidsusu/git-chord" rel="noreferrer">
-                        github.com/davidsusu/git-chord
+                    <a className="gc-link" href="https://github.com/davidsusu/git-chord" target="_blank" rel="noreferrer">
+                        https://github.com/davidsusu/git-chord
                     </a>
                 </dd>
             </dl>

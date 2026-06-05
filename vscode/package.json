@@ -1,7 +1,7 @@
 {
   "name": "git-chord",
   "displayName": "Git Chord",
-  "description": "Git Chord GUI for VSCode",
+  "description": "%gitChord.extension.description%",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.94.0"
@@ -14,6 +14,7 @@
     "onCommand:git-chord.about",
     "onCommand:git-chord.cliHelp",
     "onCommand:git-chord.repoState",
+    "onCommand:git-chord.createSnapshot",
     "onCommand:git-chord.repoStateFromExplorer"
   ],
   "main": "./dist/extension.js",
@@ -21,19 +22,23 @@
     "commands": [
       {
         "command": "git-chord.about",
-        "title": "Git Chord: About"
+        "title": "%gitChord.commands.about%"
       },
       {
         "command": "git-chord.cliHelp",
-        "title": "Git Chord: CLI Help"
+        "title": "%gitChord.commands.cliHelp%"
       },
       {
         "command": "git-chord.repoState",
-        "title": "Git Chord: Repository State"
+        "title": "%gitChord.commands.repoState%"
+      },
+      {
+        "command": "git-chord.createSnapshot",
+        "title": "%gitChord.commands.createSnapshot%"
       },
       {
         "command": "git-chord.repoStateFromExplorer",
-        "title": "Git Chord: Repository State"
+        "title": "%gitChord.commands.repoState%"
       }
     ],
     "menus": {
@@ -46,6 +51,9 @@
         },
         {
           "command": "git-chord.repoState"
+        },
+        {
+          "command": "git-chord.createSnapshot"
         },
         {
           "command": "git-chord.repoStateFromExplorer",
@@ -66,12 +74,25 @@
         "gitChord.commandPath": {
           "type": "string",
           "default": "",
-          "description": "Absolute path to the git-chord executable. When empty, the extension runs git chord from PATH."
+          "description": "%gitChord.config.commandPath%"
         },
         "gitChord.openOnStartup": {
           "type": "boolean",
           "default": false,
-          "description": "Open the Git Chord panel automatically when the extension starts."
+          "description": "%gitChord.config.openOnStartup%"
+        },
+        "gitChord.language": {
+          "type": "string",
+          "enum": [
+            "en-US",
+            "hu-HU"
+          ],
+          "enumItemLabels": [
+            "%gitChord.config.language.enUS%",
+            "%gitChord.config.language.huHU%"
+          ],
+          "default": "en-US",
+          "description": "%gitChord.config.language%"
         }
       }
     }

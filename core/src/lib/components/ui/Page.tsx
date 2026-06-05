@@ -1,4 +1,5 @@
 import React, { ButtonHTMLAttributes, ReactNode } from "react";
+import { HighlightedCode, HighlightLanguage } from "./HighlightedCode";
 
 interface PageProps {
     title: string,
@@ -20,6 +21,11 @@ interface BadgeProps {
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
     variant?: "primary" | "secondary" | "ghost",
     size?: "small" | "medium",
+};
+
+type IconButtonProps = Omit<ButtonProps, "children"> & {
+    label: string,
+    children: ReactNode,
 };
 
 export function Page({ title, description, children, actions }: PageProps) {
@@ -48,8 +54,8 @@ export function EmptyState({ title, children }: EmptyStateProps) {
     );
 }
 
-export function CodeOutput({ children }: { children: ReactNode }) {
-    return <pre className="gc-code-output">{children}</pre>;
+export function CodeOutput({ children, language = "plaintext" }: { children: ReactNode, language?: HighlightLanguage }) {
+    return <HighlightedCode code={String(children ?? "")} language={language} className="gc-code-output" />;
 }
 
 export function Badge({ children, tone = "neutral" }: BadgeProps) {
@@ -62,5 +68,18 @@ export function Button({ variant = "secondary", size = "medium", className = "",
             {...props}
             className={`gc-button gc-button-${variant} gc-button-${size}${className ? ` ${className}` : ""}`}
         />
+    );
+}
+
+export function IconButton({ label, className = "", children, ...props }: IconButtonProps) {
+    return (
+        <Button
+            {...props}
+            aria-label={label}
+            title={label}
+            className={`gc-icon-button${className ? ` ${className}` : ""}`}
+        >
+            <span className="gc-button-icon" aria-hidden="true">{children}</span>
+        </Button>
     );
 }

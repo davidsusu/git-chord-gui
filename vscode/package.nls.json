@@ -1,0 +1,12 @@
+{
+  "gitChord.extension.description": "Git Chord GUI for VS Code",
+  "gitChord.commands.about": "Git Chord: About",
+  "gitChord.commands.cliHelp": "Git Chord: CLI Help",
+  "gitChord.commands.repoState": "Git Chord: Repository State",
+  "gitChord.commands.createSnapshot": "Git Chord: Create Snapshot",
+  "gitChord.config.commandPath": "Absolute path to the git-chord executable. When empty, the extension runs git chord from PATH.",
+  "gitChord.config.openOnStartup": "Open the Git Chord panel automatically when the extension starts.",
+  "gitChord.config.language": "Language used by the Git Chord GUI extension.",
+  "gitChord.config.language.enUS": "English (US)",
+  "gitChord.config.language.huHU": "Magyar"
+}

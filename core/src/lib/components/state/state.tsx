@@ -6,7 +6,7 @@ export interface CachedContentEntry {
     loadedAt: number,
 }
 
-export type TextOutputKey = "version" | "help" | "repoState" | "repoConfig" | "repoConfigOverrides" | "repoList";
+export type TextOutputKey = "version" | "help" | "repoState" | "repoConfig" | "repoConfigOverrides" | "repoConfigAllOverrides" | "repoList" | "specOptions";
 
 export interface GlobalStateInterface {
     update(updater: (state: GlobalStateInterface) => void): void,
@@ -15,7 +15,9 @@ export interface GlobalStateInterface {
     repoState: string | null,
     repoConfig: string | null,
     repoConfigOverrides: string | null,
+    repoConfigAllOverrides: string | null,
     repoList: string | null,
+    specOptions: string | null,
     contentCache: Record<string, CachedContentEntry | undefined>,
 };
 
@@ -26,6 +28,8 @@ export const useGlobalStore = create<GlobalStateInterface>()(immer((set) => ({
     repoState: null,
     repoConfig: null,
     repoConfigOverrides: null,
+    repoConfigAllOverrides: null,
     repoList: null,
+    specOptions: null,
     contentCache: {},
 })));

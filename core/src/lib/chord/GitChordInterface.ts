@@ -1,10 +1,15 @@
 export default interface GitChordInterface {
     version(): Promise<string>,
     help(): Promise<string>,
-    state(): Promise<string>,
-    config(): Promise<string>,
+    state(options?: readonly string[]): Promise<string>,
+    config(options?: readonly string[]): Promise<string>,
     configOverrides(): Promise<string>,
+    configAllOverrides(): Promise<string>,
     configSet(key: string, value: string): Promise<string>,
     configReset(key: string): Promise<string>,
     list(): Promise<string>,
+    showSnapshot(commitId: string): Promise<string>,
+    snapshot(targetBranch: string, options?: readonly string[]): Promise<boolean>,
+    deleteSnapshot(commitId: string): Promise<boolean>,
+    specOptions(): Promise<string>,
 }
