@@ -1,32 +1,12 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Git Chord GUI</title>
 </head>
 <body>
-
-<script>
-function sendValueToJava(value) {
-    if (typeof window.cefQuery === 'function') {
-        window.cefQuery({
-            request: value,
-            onSuccess: function(response) { console.log("Received by Java:", response); },
-            onFailure: function(errorCode, errorMessage) { console.error("Java Error:", errorMessage); }
-        });
-    }
-}
-</script>
-
-<p>Hello, Git Chord!</p>
-<p>Number: <span id="number"></span></p>
-<p>
-    <input type="text" id="message">
-    <button type="button" onclick="sendValueToJava(document.getElementById('message').value)">Put message</button>
-</p>
-
 <div id="root"></div>
 <script src="./index.js"></script>
-
 </body>
 </html>

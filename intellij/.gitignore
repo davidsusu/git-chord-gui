@@ -2,5 +2,6 @@
 .idea
 .intellijPlatform
 .qodana
+.demo/
 build
 src/main/resources/webview/index.js

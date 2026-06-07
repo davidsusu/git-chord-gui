@@ -1,3 +1,5 @@
+import org.gradle.api.tasks.JavaExec
+import org.gradle.process.CommandLineArgumentProvider
 import org.jetbrains.changelog.Changelog
 import org.jetbrains.changelog.markdownToHTML
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
@@ -31,6 +33,7 @@ repositories {
 
 // Dependencies are managed with Gradle version catalog - read more: https://docs.gradle.org/current/userguide/platforms.html#sub:version-catalog
 dependencies {
+    implementation("com.google.code.gson:gson:2.11.0")
     testImplementation(libs.junit)
 
     // IntelliJ Platform Gradle Plugin Dependencies Extension - read more: https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-dependencies-extension.html
@@ -128,6 +131,24 @@ kover {
 tasks {
     wrapper {
         gradleVersion = providers.gradleProperty("gradleVersion").get()
+    }
+
+    named<JavaExec>("runIde") {
+        val demoProjectPath = providers.gradleProperty("gitChordDemoProjectPath")
+        val demoCommandPath = providers.gradleProperty("gitChordCommandPath")
+
+        argumentProviders += CommandLineArgumentProvider {
+            demoProjectPath.orNull
+                ?.takeIf { it.isNotBlank() }
+                ?.let { listOf(it) }
+                ?: emptyList()
+        }
+        jvmArgumentProviders += CommandLineArgumentProvider {
+            demoCommandPath.orNull
+                ?.takeIf { it.isNotBlank() }
+                ?.let { listOf("-DgitChord.commandPath=$it", "-DgitChord.openOnStartup=true") }
+                ?: emptyList()
+        }
     }
 
     publishPlugin {

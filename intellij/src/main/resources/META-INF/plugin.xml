@@ -9,10 +9,44 @@
     <resource-bundle>messages.GitChordBundle</resource-bundle>
 
     <extensions defaultExtensionNs="com.intellij">
-        <toolWindow factoryClass="hu.webarticum.gitchord.gui.intellij.toolWindow.GitChordWindowFactory" id="GitChordWindow"/>
+        <toolWindow
+            id="GitChordWindow"
+            anchor="right"
+            factoryClass="hu.webarticum.gitchord.gui.intellij.toolWindow.GitChordWindowFactory" />
+        <postStartupActivity implementation="hu.webarticum.gitchord.gui.intellij.startup.GitChordStartupActivity" />
+        <applicationConfigurable
+            id="hu.webarticum.gitchord.gui.intellij.settings"
+            displayName="Git Chord"
+            parentId="tools"
+            instance="hu.webarticum.gitchord.gui.intellij.settings.GitChordConfigurable" />
     </extensions>
 
-    <applicationListeners>
-        <listener class="hu.webarticum.gitchord.gui.intellij.listeners.GitChordActivationListener" topic="com.intellij.openapi.application.ApplicationActivationListener"/>
-    </applicationListeners>
+    <actions>
+        <group id="GitChord.ToolsMenu" text="Git Chord" popup="true">
+            <add-to-group group-id="ToolsMenu" anchor="last" />
+            <action
+                id="GitChord.About"
+                class="hu.webarticum.gitchord.gui.intellij.actions.GitChordAboutAction"
+                text="About" />
+            <action
+                id="GitChord.CliHelp"
+                class="hu.webarticum.gitchord.gui.intellij.actions.GitChordCliHelpAction"
+                text="CLI Help" />
+            <separator />
+            <action
+                id="GitChord.RepoState"
+                class="hu.webarticum.gitchord.gui.intellij.actions.GitChordRepoStateAction"
+                text="Current State" />
+            <action
+                id="GitChord.CreateSnapshot"
+                class="hu.webarticum.gitchord.gui.intellij.actions.GitChordCreateSnapshotAction"
+                text="Create Snapshot" />
+        </group>
+        <action
+            id="GitChord.RepoStateFromContext"
+            class="hu.webarticum.gitchord.gui.intellij.actions.GitChordRepoStateFromContextAction"
+            text="Git Chord: Current State">
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="last" />
+        </action>
+    </actions>
 </idea-plugin>
