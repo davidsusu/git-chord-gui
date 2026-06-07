@@ -29,6 +29,7 @@ gui_dir="$( physical_dir "${script_dir}/.." )" || fail "Cannot resolve GUI direc
 repo_root="$( physical_dir "${gui_dir}/.." )" || fail "Cannot resolve repository root."
 cli_repo_dir="${repo_root}/git-chord"
 cli_path="${cli_repo_dir}/bin/git-chord"
+demo_context_dir="$gui_dir"
 
 demo_dir="${script_dir}/.demo"
 tools_dir="${demo_dir}/tools"
@@ -192,7 +193,7 @@ build_extension() {
 
 run_flatpak_vscodium() {
     run_flatpak_version="$1"
-    log "Launching Flatpak VSCodium ${run_flatpak_version}."
+    log "Launching Flatpak VSCodium ${run_flatpak_version} for ${demo_context_dir}."
     exec flatpak run \
         --filesystem="${repo_root}" \
         --filesystem="${demo_dir}" \
@@ -201,19 +202,19 @@ run_flatpak_vscodium() {
         --user-data-dir "$user_data_dir" \
         --extensions-dir "$extensions_dir" \
         --extensionDevelopmentPath="$script_dir" \
-        "$cli_repo_dir"
+        "$demo_context_dir"
 }
 
 run_host_vscodium() {
     run_host_command_name="$1"
     run_host_version="$2"
-    log "Launching host VSCodium ${run_host_version} via ${run_host_command_name}."
+    log "Launching host VSCodium ${run_host_version} via ${run_host_command_name} for ${demo_context_dir}."
     exec "$run_host_command_name" \
         --new-window \
         --user-data-dir "$user_data_dir" \
         --extensions-dir "$extensions_dir" \
         --extensionDevelopmentPath="$script_dir" \
-        "$cli_repo_dir"
+        "$demo_context_dir"
 }
 
 if [ ! -x "$cli_path" ]; then

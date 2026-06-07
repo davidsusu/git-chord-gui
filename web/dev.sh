@@ -26,6 +26,7 @@ repo_root="$( physical_dir "${gui_dir}/.." )" || fail "Cannot resolve repository
 core_dir="${gui_dir}/core"
 cli_repo_dir="${repo_root}/git-chord"
 cli_path="${cli_repo_dir}/bin/git-chord"
+demo_context_dir="$gui_dir"
 
 unset LD_LIBRARY_PATH
 
@@ -78,5 +79,5 @@ fi
 if has_context_argument "$@"; then
     node "$script_dir/server.mjs" "$@"
 else
-    node "$script_dir/server.mjs" "$@" "$cli_repo_dir"
+    node "$script_dir/server.mjs" "$@" "$demo_context_dir"
 fi
