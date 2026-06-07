@@ -10,6 +10,7 @@ import type { LanguageCode, PageGroup, ThemeMode } from "@git-chord/gui-core";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { BrowserRouter } from "react-router-dom";
 import BrowserCommandExecutor from "../lib/BrowserCommandExecutor";
+import BrowserGit from "../lib/BrowserGit";
 
 export default function WebGitChordApp({ repoRoot }: { repoRoot: string | null }) {
     const [language, setLanguage] = useState<LanguageCode>(() => resolveBrowserLanguage() ?? DEFAULT_LANGUAGE);
@@ -53,6 +54,7 @@ export default function WebGitChordApp({ repoRoot }: { repoRoot: string | null }
         [],
     );
     const gitChord = useMemo(() => new CommandExecutorGitChord(commandExecutor), [commandExecutor]);
+    const git = useMemo(() => new BrowserGit(), []);
     const pageGroup = useMemo<PageGroup>(
         () => repoRoot ? { type: "repo", repoRoot } : { type: "global" },
         [repoRoot],
@@ -68,6 +70,7 @@ export default function WebGitChordApp({ repoRoot }: { repoRoot: string | null }
     return (
         <GitChordContext.Provider value={{
             gitChord,
+            git,
             pageGroup,
             currentRepoRoot: repoRoot,
             language,

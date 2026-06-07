@@ -35,10 +35,13 @@
   "dependencies": {
     "@radix-ui/react-scroll-area": "^1.2.10",
     "@radix-ui/react-separator": "^1.1.8",
+    "@radix-ui/react-tabs": "^1.1.13",
     "@radix-ui/react-tooltip": "^1.2.8",
     "highlight.js": "^11.11.1",
     "immer": "^10.1.1",
+    "lucide-react": "^0.468.0",
     "react-markdown": "^9.0.1",
+    "yaml": "^2.8.1",
     "zustand": "^5.0.0"
   },
   "peerDependencies": {

@@ -18,9 +18,22 @@ type WebviewMessage = {
     type?: string;
     id?: string;
     command?: unknown;
+    commitIds?: unknown;
     request?: unknown;
     language?: unknown;
     commitId?: unknown;
+};
+
+type GitGraphCommit = {
+    id: string;
+    parentIds: string[];
+    refs: string[];
+    subject: string;
+    timestamp: number | null;
+};
+
+type GitGraphData = {
+    commits: GitGraphCommit[];
 };
 
 type PageOpenRequest = {
@@ -172,6 +185,11 @@ async function handleWebviewMessage(context: vscode.ExtensionContext, record: Pa
         return;
     }
 
+    if (message.type === 'gitGraph') {
+        await handleGitGraph(record, message.id, message.commitIds);
+        return;
+    }
+
     if (message.type !== 'exec' || typeof message.id !== 'string' || !Array.isArray(message.command)) {
         return;
     }
@@ -195,6 +213,21 @@ async function handleWebviewMessage(context: vscode.ExtensionContext, record: Pa
         type: 'execResult',
         id: message.id,
         result,
+    });
+}
+
+async function handleGitGraph(record: PanelRecord, id: unknown, commitIdsValue: unknown) {
+    if (typeof id !== 'string' || !Array.isArray(commitIdsValue)) {
+        return;
+    }
+
+    const commitIds = commitIdsValue.filter((commitId): commitId is string => typeof commitId === 'string');
+    const repoRoot = record.group.type === 'repo' ? record.group.repoRoot : await resolveCurrentRepoRoot();
+    const graph = repoRoot ? await execGitGraph(repoRoot, commitIds) : { commits: [] };
+    await record.panel.webview.postMessage({
+        type: 'gitGraphResult',
+        id,
+        graph,
     });
 }
 
@@ -418,6 +451,57 @@ function execGitShowCommit(repoRoot: string, commitId: string): Promise<{ status
             resolve({ status, stdout, stderr: stderr || error?.message || '' });
         });
     });
+}
+
+async function execGitGraph(repoRoot: string, commitIds: string[]): Promise<GitGraphData> {
+    const normalizedCommitIds = Array.from(new Set(commitIds.filter(commitId => COMMIT_ID_PATTERN.test(commitId))));
+    if (normalizedCommitIds.length === 0) {
+        return { commits: [] };
+    }
+
+    const result = await execGitCommand(repoRoot, [
+        'log',
+        '--no-color',
+        '--topo-order',
+        '--date-order',
+        '--max-count=80',
+        '--format=%H%x00%P%x00%ct%x00%D%x00%s%x1e',
+        ...normalizedCommitIds,
+    ]);
+    if (result.status !== 0) {
+        return { commits: [] };
+    }
+
+    return { commits: parseGitGraphOutput(result.stdout) };
+}
+
+function execGitCommand(repoRoot: string, args: string[]): Promise<{ status: number; stdout: string; stderr: string }> {
+    return new Promise(resolve => {
+        execFile('git', ['-C', repoRoot, ...args], {
+            maxBuffer: 20 * 1024 * 1024,
+            windowsHide: true,
+        }, (error, stdout, stderr) => {
+            const status = typeof error?.code === 'number' ? error.code : (error ? 1 : 0);
+            resolve({ status, stdout, stderr: stderr || error?.message || '' });
+        });
+    });
+}
+
+function parseGitGraphOutput(output: string): GitGraphCommit[] {
+    return output.split('\x1e')
+        .map(record => record.trim())
+        .filter(record => record !== '')
+        .map(record => {
+            const [id = '', parents = '', timestamp = '', refs = '', subject = ''] = record.split('\x00');
+            return {
+                id,
+                parentIds: parents.split(' ').filter(parentId => COMMIT_ID_PATTERN.test(parentId)),
+                refs: refs.split(', ').map(ref => ref.trim()).filter(ref => ref !== ''),
+                subject,
+                timestamp: Number.isFinite(Number(timestamp)) ? Number(timestamp) : null,
+            };
+        })
+        .filter(commit => COMMIT_ID_PATTERN.test(commit.id));
 }
 
 function getConfiguredLanguage(): LanguageCode {

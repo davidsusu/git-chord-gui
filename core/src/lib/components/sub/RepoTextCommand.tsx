@@ -49,11 +49,7 @@ export default function RepoTextCommand({ title, outputKey, command }: RepoTextC
 
     return (
         <Page title={title} description={repoRoot}>
-            <CodeOutput>{stripAnsi(output)}</CodeOutput>
+            <CodeOutput>{output}</CodeOutput>
         </Page>
     );
-}
-
-function stripAnsi(value: string): string {
-    return value.replace(/\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])/g, "");
 }

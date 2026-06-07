@@ -6,7 +6,7 @@ import {
     normalizeLanguage,
     translate,
 } from '@git-chord/gui-core';
-import type { CommandExecutorInterface, LanguageCode, PageGroup, PageIntent, PageOpenRequest } from '@git-chord/gui-core';
+import type { CommandExecutorInterface, GitGraphData, GitInterface, LanguageCode, PageGroup, PageIntent, PageOpenRequest } from '@git-chord/gui-core';
 import React, { useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import { ErrorBoundary } from 'react-error-boundary';
@@ -43,10 +43,16 @@ type HostMessage = InitialState & {
         stdout?: string;
         stderr?: string;
     };
+    graph?: GitGraphData;
 };
 
 type PendingRequest = {
     resolve: (result: CommandResult) => void;
+    timeoutId: number;
+};
+
+type PendingGraphRequest = {
+    resolve: (result: GitGraphData) => void;
     timeoutId: number;
 };
 
@@ -76,14 +82,34 @@ function postHostMessage(message: unknown) {
     });
 }
 
-class IntelliJCommandExecutor implements CommandExecutorInterface {
+class IntelliJCommandExecutor implements CommandExecutorInterface, GitInterface {
 
     private readonly pendingRequests = new Map<string, PendingRequest>();
+
+    private readonly pendingGraphRequests = new Map<string, PendingGraphRequest>();
 
     private nextRequestId = 1;
 
     constructor(private readonly getLanguage: () => LanguageCode) {
         addHostMessageListener(message => this.handleMessage(message));
+    }
+
+    graph(commitIds: readonly string[]): Promise<GitGraphData> {
+        const id = `${this.nextRequestId++}`;
+        const timeoutId = window.setTimeout(() => {
+            const pendingRequest = this.pendingGraphRequests.get(id);
+            if (!pendingRequest) {
+                return;
+            }
+
+            this.pendingGraphRequests.delete(id);
+            pendingRequest.resolve({ commits: [] });
+        }, 30000);
+
+        return new Promise(resolve => {
+            this.pendingGraphRequests.set(id, { resolve, timeoutId });
+            postHostMessage({ type: 'gitGraph', id, commitIds });
+        });
     }
 
     exec(command: string[]): Promise<CommandResult> {
@@ -125,6 +151,20 @@ class IntelliJCommandExecutor implements CommandExecutorInterface {
     }
 
     private handleMessage(message: HostMessage) {
+        if (message.type === 'gitGraphResult' && typeof message.id === 'string') {
+            const pendingRequest = this.pendingGraphRequests.get(message.id);
+            if (!pendingRequest) {
+                return;
+            }
+
+            this.pendingGraphRequests.delete(message.id);
+            window.clearTimeout(pendingRequest.timeoutId);
+            pendingRequest.resolve({
+                commits: Array.isArray(message.graph?.commits) ? message.graph.commits : [],
+            });
+            return;
+        }
+
         if (message.type !== 'execResult' || typeof message.id !== 'string') {
             return;
         }
@@ -224,6 +264,7 @@ function App() {
     return (
         <GitChordContext.Provider value={{
             gitChord,
+            git: commandExecutor,
             pageGroup,
             currentRepoRoot,
             language,

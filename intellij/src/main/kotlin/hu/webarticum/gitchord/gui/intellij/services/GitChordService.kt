@@ -98,6 +98,7 @@ class GitChordService(private val project: Project) {
             "openPage" -> handleOpenPageRequest(panel, message.request)
             "setLanguage" -> handleSetLanguage(message.language)
             "openCommit" -> handleOpenCommit(panel.group, message.commitId)
+            "gitGraph" -> handleGitGraph(panel, message)
             "exec" -> handleExec(panel, message)
         }
     }
@@ -117,6 +118,21 @@ class GitChordService(private val project: Project) {
 
             this.toolWindow = toolWindow
             toolWindow.activate({ openPageInToolWindow(toolWindow, group, path, intent) }, true)
+        }
+    }
+
+    private fun handleGitGraph(panel: GitChordPanel, message: WebviewMessage) {
+        val id = message.id ?: return
+        val commitIds = message.commitIds ?: return
+
+        runInBackground {
+            val repoRoot = if (panel.group.type == PanelGroup.TYPE_REPO) panel.group.repoRoot else resolveCurrentRepoRoot()
+            val graph = if (repoRoot == null) {
+                mapOf("commits" to emptyList<Map<String, Any?>>())
+            } else {
+                runGitGraph(repoRoot, commitIds)
+            }
+            panel.postMessage(mapOf("type" to "gitGraphResult", "id" to id, "graph" to graph))
         }
     }
 
@@ -266,6 +282,58 @@ class GitChordService(private val project: Project) {
             command
         }
         return runProcess(resolvedCommand, cwd, COMMAND_TIMEOUT_MILLIS)
+    }
+
+    private fun runGitGraph(repoRoot: String, commitIds: List<String>): Map<String, Any?> {
+        val normalizedCommitIds = commitIds
+            .filter { COMMIT_ID_PATTERN.matches(it) }
+            .distinct()
+        if (normalizedCommitIds.isEmpty()) {
+            return mapOf("commits" to emptyList<Map<String, Any?>>())
+        }
+
+        val result = runProcess(
+            listOf(
+                "git",
+                "-C",
+                repoRoot,
+                "log",
+                "--no-color",
+                "--topo-order",
+                "--date-order",
+                "--max-count=80",
+                "--format=%H%x00%P%x00%ct%x00%D%x00%s%x1e",
+            ) + normalizedCommitIds,
+            null,
+            COMMAND_TIMEOUT_MILLIS,
+        )
+        if (result.status != 0) {
+            return mapOf("commits" to emptyList<Map<String, Any?>>())
+        }
+
+        return mapOf("commits" to parseGitGraphOutput(result.stdout))
+    }
+
+    private fun parseGitGraphOutput(output: String): List<Map<String, Any?>> {
+        return output.split('\u001e')
+            .map { it.trim() }
+            .filter { it.isNotBlank() }
+            .mapNotNull { record ->
+                val fields = record.split('\u0000')
+                val id = fields.getOrNull(0).orEmpty()
+                if (!COMMIT_ID_PATTERN.matches(id)) {
+                    return@mapNotNull null
+                }
+
+                val timestamp = fields.getOrNull(2)?.toLongOrNull()
+                mapOf(
+                    "id" to id,
+                    "parentIds" to fields.getOrNull(1).orEmpty().split(' ').filter { COMMIT_ID_PATTERN.matches(it) },
+                    "timestamp" to timestamp,
+                    "refs" to fields.getOrNull(3).orEmpty().split(", ").map { it.trim() }.filter { it.isNotBlank() },
+                    "subject" to fields.getOrNull(4).orEmpty(),
+                )
+            }
     }
 
     private fun runProcess(command: List<String>, cwd: String?, timeoutMillis: Long): CommandResultPayload {

@@ -239,7 +239,7 @@ function ConfirmDeleteDialog({
 }
 
 function parseSnapshotList(output: string, t: (key: "list.snapshotFallback") => string): SnapshotEntry[] {
-    return stripAnsi(output).split(/\r?\n/)
+    return output.split(/\r?\n/)
         .map(line => line.trim())
         .filter(line => line !== "")
         .map(line => {
@@ -264,7 +264,7 @@ function parseSnapshotList(output: string, t: (key: "list.snapshotFallback") => 
 function removeSnapshotLine(output: string, commitId: string): string {
     return output.split(/\r?\n/)
         .filter(line => {
-            const lineCommitId = stripAnsi(line).trim().split(/\s+/, 1)[0];
+            const lineCommitId = line.trim().split(/\s+/, 1)[0];
             return lineCommitId !== commitId;
         })
         .join("\n");
@@ -283,8 +283,4 @@ function formatTimestamp(timestamp: string, language: string): string {
         hour: "2-digit",
         minute: "2-digit",
     });
-}
-
-function stripAnsi(value: string): string {
-    return value.replace(/\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])/g, "");
 }

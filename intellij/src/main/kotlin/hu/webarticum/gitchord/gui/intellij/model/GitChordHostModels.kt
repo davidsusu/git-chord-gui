@@ -56,6 +56,7 @@ data class WebviewMessage(
     val type: String? = null,
     val id: String? = null,
     val command: List<String>? = null,
+    val commitIds: List<String>? = null,
     val request: PageOpenRequest? = null,
     val language: String? = null,
     val commitId: String? = null,
@@ -66,4 +67,3 @@ data class CommandResultPayload(
     val stdout: String,
     val stderr: String,
 )
-

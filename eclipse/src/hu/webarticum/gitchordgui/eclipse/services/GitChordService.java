@@ -148,6 +148,9 @@ public final class GitChordService {
 			case "openCommit":
 				handleOpenCommit(view.group(), asString(message.get("commitId")));
 				break;
+			case "gitGraph":
+				handleGitGraph(view, asString(message.get("id")), asStringList(message.get("commitIds")));
+				break;
 			case "exec":
 				handleExec(view, asString(message.get("id")), asStringList(message.get("command")));
 				break;
@@ -314,6 +317,20 @@ public final class GitChordService {
 		});
 	}
 
+	private void handleGitGraph(GitChordGui view, String id, List<String> commitIds) {
+		if (id == null || commitIds == null) {
+			return;
+		}
+
+		runInBackground(() -> {
+			String repoRoot = view.group().isRepo() ? view.group().repoRoot() : resolveCurrentRepoRoot();
+			Map<String, Object> graph = repoRoot == null
+				? mapOf("commits", List.of())
+				: runGitGraph(repoRoot, commitIds);
+			view.postMessage(mapOf("type", "gitGraphResult", "id", id, "graph", graph));
+		});
+	}
+
 	private CommandResultPayload runGitChordCommand(List<String> command, String cwd) {
 		String configuredCommandPath = GitChordPreferences.effectiveCommandPath();
 		List<String> resolvedCommand = new ArrayList<>();
@@ -324,6 +341,91 @@ public final class GitChordService {
 			resolvedCommand.addAll(command);
 		}
 		return runProcess(resolvedCommand, cwd, COMMAND_TIMEOUT_MILLIS);
+	}
+
+	private Map<String, Object> runGitGraph(String repoRoot, List<String> commitIds) {
+		List<String> normalizedCommitIds = new ArrayList<>();
+		for (String commitId : commitIds) {
+			if (COMMIT_ID_PATTERN.matcher(commitId).matches() && !normalizedCommitIds.contains(commitId)) {
+				normalizedCommitIds.add(commitId);
+			}
+		}
+		if (normalizedCommitIds.isEmpty()) {
+			return mapOf("commits", List.of());
+		}
+
+		List<String> command = new ArrayList<>(List.of(
+			"git",
+			"-C",
+			repoRoot,
+			"log",
+			"--no-color",
+			"--topo-order",
+			"--date-order",
+			"--max-count=80",
+			"--format=%H%x00%P%x00%ct%x00%D%x00%s%x1e"
+		));
+		command.addAll(normalizedCommitIds);
+		CommandResultPayload result = runProcess(command, null, COMMAND_TIMEOUT_MILLIS);
+		if (result.status() != 0) {
+			return mapOf("commits", List.of());
+		}
+
+		return mapOf("commits", parseGitGraphOutput(result.stdout()));
+	}
+
+	private List<Map<String, Object>> parseGitGraphOutput(String output) {
+		List<Map<String, Object>> commits = new ArrayList<>();
+		for (String record : output.split("\u001e")) {
+			String trimmedRecord = record.trim();
+			if (trimmedRecord.isEmpty()) {
+				continue;
+			}
+
+			String[] fields = trimmedRecord.split("\u0000", -1);
+			String id = fields.length > 0 ? fields[0] : "";
+			if (!COMMIT_ID_PATTERN.matcher(id).matches()) {
+				continue;
+			}
+
+			commits.add(mapOf(
+				"id", id,
+				"parentIds", splitCommitIds(fields.length > 1 ? fields[1] : ""),
+				"timestamp", parseLongOrNull(fields.length > 2 ? fields[2] : ""),
+				"refs", splitRefs(fields.length > 3 ? fields[3] : ""),
+				"subject", fields.length > 4 ? fields[4] : ""
+			));
+		}
+		return commits;
+	}
+
+	private List<String> splitCommitIds(String value) {
+		List<String> result = new ArrayList<>();
+		for (String item : value.split(" ")) {
+			if (COMMIT_ID_PATTERN.matcher(item).matches()) {
+				result.add(item);
+			}
+		}
+		return result;
+	}
+
+	private List<String> splitRefs(String value) {
+		List<String> result = new ArrayList<>();
+		for (String item : value.split(", ")) {
+			String trimmedItem = item.trim();
+			if (!trimmedItem.isEmpty()) {
+				result.add(trimmedItem);
+			}
+		}
+		return result;
+	}
+
+	private Long parseLongOrNull(String value) {
+		try {
+			return Long.valueOf(value);
+		} catch (NumberFormatException e) {
+			return null;
+		}
 	}
 
 	private CommandResultPayload runProcess(List<String> command, String cwd, long timeoutMillis) {

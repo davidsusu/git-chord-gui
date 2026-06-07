@@ -1,6 +1,8 @@
 import { createContext, useContext } from 'react';
 import GitChordInterface from '../../chord/GitChordInterface';
 import MockGitChord from '../../chord/MockGitChord';
+import GitInterface from '../../git/GitInterface';
+import MockGit from '../../git/MockGit';
 import { DEFAULT_LANGUAGE, LanguageCode } from '../../i18n';
 
 export type PageGroup =
@@ -24,6 +26,7 @@ export interface UiControls {
 
 export interface GlobalContextInterface {
     gitChord: GitChordInterface,
+    git: GitInterface,
     pageGroup: PageGroup,
     currentRepoRoot?: string | null,
     openPage?: (request: PageOpenRequest) => void,
@@ -37,6 +40,7 @@ export interface GlobalContextInterface {
 
 export const GlobalContext = createContext<GlobalContextInterface>({
     gitChord: new MockGitChord(),
+    git: new MockGit(),
     pageGroup: { type: 'global' },
     language: DEFAULT_LANGUAGE,
     themeMode: 'auto',

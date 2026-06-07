@@ -200,6 +200,15 @@ body {
     cursor: pointer;
 }
 
+.gc-theme-icon,
+.gc-nav-icon,
+.gc-tab-icon {
+    width: 16px;
+    height: 16px;
+    flex: 0 0 auto;
+    stroke-width: 2;
+}
+
 .gc-language-button:hover,
 .gc-theme-button:hover {
     background: var(--gc-hover-bg);
@@ -233,6 +242,10 @@ body {
 .gc-brand-title {
     font-size: 14px;
     font-weight: 650;
+}
+
+.gc-brand-text {
+    min-width: 0;
 }
 
 .gc-brand-subtitle,
@@ -309,6 +322,9 @@ body {
 }
 
 .gc-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     width: 100%;
     min-height: 30px;
     padding: 5px 8px;
@@ -319,6 +335,13 @@ body {
     font: inherit;
     text-align: left;
     cursor: pointer;
+}
+
+.gc-nav-label {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .gc-nav-item:hover {
@@ -332,7 +355,9 @@ body {
 .gc-language-button:focus-visible,
 .gc-theme-button:focus-visible,
 .gc-code-link:focus-visible,
-.gc-commit-link:focus-visible {
+.gc-commit-link:focus-visible,
+.gc-snapshot-tab-trigger:focus-visible,
+.gc-snapshot-graph-node:focus-visible {
     outline: 1px solid var(--gc-focus);
     outline-offset: 1px;
 }
@@ -625,6 +650,168 @@ body {
     gap: 6px;
 }
 
+.gc-snapshot-detail {
+    display: grid;
+    gap: 18px;
+}
+
+.gc-section-title {
+    margin: 0 0 8px;
+    font-size: 16px;
+    font-weight: 650;
+    line-height: 1.25;
+}
+
+.gc-snapshot-summary {
+    padding: 12px;
+    border: 1px solid var(--gc-border);
+    border-radius: var(--gc-radius);
+    background: var(--gc-elevated-bg);
+}
+
+.gc-snapshot-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+    gap: 10px 18px;
+    margin: 0;
+}
+
+.gc-snapshot-summary-grid div {
+    min-width: 0;
+}
+
+.gc-snapshot-summary-grid dt {
+    color: var(--gc-muted);
+    font-size: 12px;
+    font-weight: 650;
+}
+
+.gc-snapshot-summary-grid dd {
+    min-width: 0;
+    margin: 2px 0 0;
+}
+
+.gc-snapshot-references {
+    display: grid;
+    gap: 8px;
+}
+
+.gc-snapshot-reference-table {
+    min-width: 680px;
+}
+
+.gc-snapshot-tabs {
+    display: grid;
+    min-width: 0;
+}
+
+.gc-snapshot-tabs-list {
+    display: flex;
+    gap: 2px;
+    padding: 6px 8px 0;
+    border-bottom: 1px solid var(--gc-border);
+    background: var(--gc-elevated-bg);
+}
+
+.gc-snapshot-tab-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 30px;
+    padding: 5px 10px;
+    border: 1px solid transparent;
+    border-bottom: 0;
+    border-radius: var(--gc-radius) var(--gc-radius) 0 0;
+    color: var(--gc-muted);
+    background: transparent;
+    font: inherit;
+    cursor: pointer;
+}
+
+.gc-snapshot-tab-trigger:hover {
+    color: var(--gc-foreground);
+    background: var(--gc-hover-bg);
+}
+
+.gc-snapshot-tab-trigger[data-state="active"] {
+    border-color: var(--gc-border);
+    color: var(--gc-foreground);
+    background: var(--gc-bg);
+}
+
+.gc-snapshot-tabs-content-shell {
+    position: relative;
+    min-width: 0;
+    overflow: hidden;
+    transition: max-height 160ms ease;
+}
+
+.gc-snapshot-tab-content {
+    min-width: 0;
+}
+
+.gc-snapshot-tab-content > .gc-highlighted-code {
+    display: block;
+    width: 100%;
+    overflow: auto;
+    padding: 12px;
+    margin: 0;
+    border: 0;
+    background: var(--gc-code-bg);
+    white-space: pre-wrap;
+}
+
+.gc-snapshot-graph-wrap {
+    width: 100%;
+    overflow: auto;
+    padding: 12px;
+    background: var(--gc-code-bg);
+}
+
+.gc-snapshot-graph {
+    display: block;
+    width: 100%;
+    min-width: 680px;
+    height: auto;
+    color: var(--gc-foreground);
+}
+
+.gc-snapshot-graph-edge {
+    stroke: color-mix(in srgb, var(--gc-muted) 50%, transparent);
+    stroke-width: 2;
+}
+
+.gc-snapshot-graph-node {
+    cursor: pointer;
+}
+
+.gc-snapshot-graph-dot {
+    fill: var(--gc-elevated-bg);
+    stroke: var(--gc-link-fg);
+    stroke-width: 2;
+}
+
+.gc-snapshot-graph-node[data-focus="true"] .gc-snapshot-graph-dot {
+    fill: var(--gc-link-fg);
+}
+
+.gc-snapshot-graph-id {
+    fill: var(--gc-link-fg);
+    font-family: var(--vscode-editor-font-family, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace);
+    font-size: 12px;
+    text-decoration: underline;
+}
+
+.gc-snapshot-graph-subject {
+    fill: var(--gc-foreground);
+    font-size: 13px;
+}
+
+.gc-snapshot-graph-meta {
+    fill: var(--gc-muted);
+    font-size: 11px;
+}
+
 .gc-state-options {
     display: grid;
     gap: 10px;
@@ -702,13 +889,7 @@ body {
     background: var(--gc-elevated-bg);
 }
 
-.gc-state-output-body {
-    position: relative;
-    overflow: hidden;
-    transition: max-height 160ms ease;
-}
-
-.gc-state-output[data-expanded="false"] .gc-state-output-body {
+.gc-state-output[data-expanded="false"] .gc-snapshot-tabs-content-shell {
     max-height: calc(2.9em + 24px);
 }
 
@@ -735,6 +916,10 @@ body {
     border: 0;
     background: var(--gc-code-bg);
     white-space: pre-wrap;
+}
+
+.gc-state-output .gc-snapshot-tabs-list {
+    padding-right: 44px;
 }
 
 .gc-state-output-copy {
@@ -1063,30 +1248,67 @@ body {
 
 @media (max-width: 760px) {
     .gc-root {
-        display: block;
+        --gc-sidebar-width: 56px;
     }
 
     .gc-sidebar {
-        width: 100%;
-        min-height: auto;
-        border-right: 0;
-        border-bottom: 1px solid var(--gc-border);
-    }
-
-    .gc-scroll-root {
-        height: auto;
+        min-height: 100vh;
     }
 
     .gc-main {
-        min-height: auto;
+        min-width: 0;
     }
 
     .gc-main-inner {
         padding: 18px 16px 36px;
     }
 
-    .gc-nav-list {
-        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    .gc-sidebar-inner {
+        padding: 12px 8px;
+    }
+
+    .gc-brand {
+        justify-content: center;
+    }
+
+    .gc-brand-text,
+    .gc-context-card,
+    .gc-nav-heading,
+    .gc-nav-label {
+        display: none;
+    }
+
+    .gc-separator {
+        margin: 12px 0;
+    }
+
+    .gc-nav-section {
+        margin-top: 12px;
+    }
+
+    .gc-nav-item {
+        justify-content: center;
+        min-height: 36px;
+        padding: 6px;
+    }
+
+    .gc-nav-icon {
+        width: 18px;
+        height: 18px;
+    }
+
+    .gc-sidebar-footer {
+        margin-top: 12px;
+        padding-top: 12px;
+    }
+
+    .gc-language-switcher {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .gc-language-button {
+        width: 36px;
     }
 
     .gc-page-header {

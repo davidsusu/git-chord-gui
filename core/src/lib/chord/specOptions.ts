@@ -8,7 +8,7 @@ export interface SpecOptionDefinition {
 }
 
 export function parseSpecOptions(output: string, hiddenOptionTokens: ReadonlySet<string> = new Set()): SpecOptionDefinition[] {
-    const lines = stripAnsi(output).split(/\r?\n/)
+    const lines = output.split(/\r?\n/)
         .map(line => line.trim())
         .filter(line => line.startsWith("--"));
     const lineSet = new Set(lines);
@@ -81,8 +81,4 @@ function shouldHideOptionToken(token: string, hiddenOptionTokens: ReadonlySet<st
 function optionTokenToConfigKey(token: string): string {
     const normalizedToken = token.startsWith("--no-") ? `--${token.slice("--no-".length)}` : token;
     return normalizedToken.replace(/^--/, "").replace(/-/g, ".");
-}
-
-function stripAnsi(value: string): string {
-    return value.replace(/\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])/g, "");
 }

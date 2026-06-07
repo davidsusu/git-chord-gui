@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import * as ScrollArea from '@radix-ui/react-scroll-area';
 import * as Separator from '@radix-ui/react-separator';
 import * as Tooltip from '@radix-ui/react-tooltip';
+import { BookOpenText, GitBranch, History, Info, Moon, Settings, Sun } from 'lucide-react';
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { ThemeMode, useGlobalContext } from './state/context';
 import { useTranslation } from '../i18n/useTranslation';
@@ -118,7 +119,7 @@ export default function GitChordGui() {
                                 <div className="gc-sidebar-content">
                                     <div className="gc-brand">
                                         <div className="gc-brand-mark" aria-hidden="true">GC</div>
-                                        <div>
+                                        <div className="gc-brand-text">
                                             <div className="gc-brand-title">Git Chord</div>
                                             <div className="gc-brand-subtitle">
                                                 {pageGroup.type === 'repo' ? t('nav.repositoryPanel') : t('nav.generalPanel')}
@@ -131,25 +132,15 @@ export default function GitChordGui() {
                                     <RepositoryContext tooltipContainer={tooltipContainer} />
 
                                     <NavSection title={t('nav.general')}>
-                                    <NavButton active={isGlobalActive('/about')} onClick={() => openGlobalPage('/about')}>
-                                        {t('nav.about')}
-                                    </NavButton>
-                                    <NavButton active={isGlobalActive('/cli-help')} onClick={() => openGlobalPage('/cli-help')}>
-                                        {t('nav.cliHelp')}
-                                    </NavButton>
+                                    <NavButton icon={<Info />} label={t('nav.about')} active={isGlobalActive('/about')} onClick={() => openGlobalPage('/about')} />
+                                    <NavButton icon={<BookOpenText />} label={t('nav.cliHelp')} active={isGlobalActive('/cli-help')} onClick={() => openGlobalPage('/cli-help')} />
                                     </NavSection>
 
                                     {repoContextStatus !== 'missing' ? (
                                         <NavSection title={t('nav.repository')}>
-                                            <NavButton active={isRepoActive('/')} onClick={() => openRepoPage('/')}>
-                                                {t('nav.currentState')}
-                                            </NavButton>
-                                            <NavButton active={isRepoActive('/list')} onClick={() => openRepoPage('/list')}>
-                                                {t('nav.snapshotHistory')}
-                                            </NavButton>
-                                            <NavButton active={isRepoActive('/config')} onClick={() => openRepoPage('/config')}>
-                                                {t('nav.configuration')}
-                                            </NavButton>
+                                            <NavButton icon={<GitBranch />} label={t('nav.currentState')} active={isRepoActive('/')} onClick={() => openRepoPage('/')} />
+                                            <NavButton icon={<History />} label={t('nav.snapshotHistory')} active={isRepoActive('/list')} onClick={() => openRepoPage('/list')} />
+                                            <NavButton icon={<Settings />} label={t('nav.configuration')} active={isRepoActive('/config')} onClick={() => openRepoPage('/config')} />
                                         </NavSection>
                                     ) : null}
                                 </div>
@@ -309,7 +300,7 @@ function ThemeSwitcher({
                 aria-label={t('theme.light')}
                 onClick={() => onThemeModeChange('light')}
             >
-                <span aria-hidden="true">☀</span>
+                <Sun className="gc-theme-icon" aria-hidden="true" />
             </button>
             <button
                 type="button"
@@ -319,7 +310,7 @@ function ThemeSwitcher({
                 aria-label={t('theme.dark')}
                 onClick={() => onThemeModeChange('dark')}
             >
-                <span aria-hidden="true">☾</span>
+                <Moon className="gc-theme-icon" aria-hidden="true" />
             </button>
         </div>
     );
@@ -336,16 +327,18 @@ function NavSection({ title, children }: { title: string, children: React.ReactN
     );
 }
 
-function NavButton({ active, onClick, children }: { active: boolean, onClick: () => void, children: React.ReactNode }) {
+function NavButton({ active, onClick, icon, label }: { active: boolean, onClick: () => void, icon: React.ReactElement, label: string }) {
     return (
         <button
             type="button"
             className="gc-nav-item"
             data-active={active ? 'true' : undefined}
             aria-current={active ? 'page' : undefined}
+            title={label}
             onClick={onClick}
         >
-            {children}
+            {React.cloneElement(icon, { className: "gc-nav-icon", "aria-hidden": "true" })}
+            <span className="gc-nav-label">{label}</span>
         </button>
     );
 }

@@ -95,7 +95,7 @@ export default class CommandExecutorGitChord implements GitChordInterface {
     }
 
     specOptions(): Promise<string> {
-        return this.execAndFetchTextResult(["spec", "options"]);
+        return this.execAndFetchTextResult(["spec", "options", "--no-color"]);
     }
 
 }

@@ -9,6 +9,7 @@ import useCachedGitChordText from "../state/useCachedGitChordText";
 import { Button, EmptyState, IconButton, Page } from "../ui/Page";
 import { HighlightedCode } from "../ui/HighlightedCode";
 import { useTranslation } from "../../i18n/useTranslation";
+import SnapshotDataTabs from "./SnapshotDataTabs";
 
 type FilterKind = "value" | "boolean" | "profile";
 
@@ -363,10 +364,12 @@ function StateOutput({ output, expanded, onExpandedChange }: StateOutputProps & 
             >
                 {copied ? "✓" : "⧉"}
             </IconButton>
-            <div className="gc-state-output-body">
-                <HighlightedCode code={output} language="yaml" className="gc-state-output-code" />
-                {!expanded ? <div className="gc-state-output-fade" aria-hidden="true" /> : null}
-            </div>
+            <SnapshotDataTabs
+                output={output}
+                collapsed={!expanded}
+                onExpandRequest={() => onExpandedChange(true)}
+                codeClassName="gc-state-output-code"
+            />
             <div className="gc-state-output-toggle-row">
                 <IconButton
                     type="button"
@@ -652,7 +655,7 @@ function parseStateSpecOptionDefinitions(output: string): OptionDefinition[] {
 
 function parseProfileDefinitions(output: string): OptionDefinition[] {
     const profileNames = new Set<string>();
-    stripAnsi(output).split(/\r?\n/).forEach(line => {
+    output.split(/\r?\n/).forEach(line => {
         const match = line.match(/^profile\.([A-Za-z0-9_]+)\./);
         if (match) {
             profileNames.add(match[1]);
@@ -716,13 +719,9 @@ function shellQuote(value: string): string {
     return `'${value.replace(/'/g, `'\\''`)}'`;
 }
 
-function stripAnsi(value: string): string {
-    return value.replace(/\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])/g, "");
-}
-
 function parseSnapshotTargetConfig(output: string): SnapshotTargetConfig {
     const values = new Map<string, string>();
-    stripAnsi(output).split(/\r?\n/).forEach(line => {
+    output.split(/\r?\n/).forEach(line => {
         const separatorIndex = line.indexOf(" ");
         if (separatorIndex === -1) {
             return;

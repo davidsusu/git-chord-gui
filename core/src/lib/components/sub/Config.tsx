@@ -290,7 +290,7 @@ function normalizeBooleanValue(value: string): "true" | "false" {
 }
 
 function parseConfigList(output: string): ConfigEntry[] {
-    return stripAnsi(output).split(/\r?\n/)
+    return output.split(/\r?\n/)
         .filter(line => line !== "")
         .map(line => {
             const separatorIndex = line.indexOf(" ");
@@ -310,8 +310,4 @@ function formatConfigList(entries: ConfigEntry[]): string {
 
 function updateEntryValue(entries: ConfigEntry[], key: string, value: string): ConfigEntry[] {
     return entries.map(entry => entry.key === key ? { ...entry, value } : entry);
-}
-
-function stripAnsi(value: string): string {
-    return value.replace(/\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])/g, "");
 }

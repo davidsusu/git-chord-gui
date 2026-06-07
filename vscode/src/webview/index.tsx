@@ -6,7 +6,7 @@ import {
     normalizeLanguage,
     translate,
 } from '@git-chord/gui-core';
-import type { CommandExecutorInterface, LanguageCode, PageGroup, PageIntent, PageOpenRequest } from '@git-chord/gui-core';
+import type { CommandExecutorInterface, GitGraphData, GitInterface, LanguageCode, PageGroup, PageIntent, PageOpenRequest } from '@git-chord/gui-core';
 import React, { useEffect } from 'react'
 import { createRoot } from 'react-dom/client'
 import { ErrorBoundary } from 'react-error-boundary';
@@ -31,6 +31,11 @@ type PendingRequest = {
     timeoutId: number;
 };
 
+type PendingGraphRequest = {
+    resolve: (result: GitGraphData) => void;
+    timeoutId: number;
+};
+
 type ExecResultMessage = {
     type?: string;
     id?: string;
@@ -43,19 +48,39 @@ type ExecResultMessage = {
         stdout?: string;
         stderr?: string;
     };
+    graph?: GitGraphData;
 };
 
-class VsCodeCommandExecutor implements CommandExecutorInterface {
+class VsCodeCommandExecutor implements CommandExecutorInterface, GitInterface {
 
     private readonly vscode = acquireVsCodeApi();
 
     private readonly pendingRequests = new Map<string, PendingRequest>();
+
+    private readonly pendingGraphRequests = new Map<string, PendingGraphRequest>();
 
     private nextRequestId = 1;
 
     constructor(private readonly getLanguage: () => LanguageCode) {
         window.addEventListener('message', event => {
             this.handleMessage(event.data as ExecResultMessage);
+        });
+    }
+
+    graph(commitIds: readonly string[]): Promise<GitGraphData> {
+        const id = `${this.nextRequestId++}`;
+        const timeoutId = window.setTimeout(() => {
+            const pendingRequest = this.pendingGraphRequests.get(id);
+            if (!pendingRequest) {
+                return;
+            }
+            this.pendingGraphRequests.delete(id);
+            pendingRequest.resolve({ commits: [] });
+        }, 30000);
+
+        return new Promise(resolve => {
+            this.pendingGraphRequests.set(id, { resolve, timeoutId });
+            this.vscode.postMessage({ type: 'gitGraph', id, commitIds });
         });
     }
 
@@ -93,6 +118,20 @@ class VsCodeCommandExecutor implements CommandExecutorInterface {
     }
 
     private handleMessage(message: ExecResultMessage) {
+        if (message.type === 'gitGraphResult' && typeof message.id === 'string') {
+            const pendingRequest = this.pendingGraphRequests.get(message.id);
+            if (!pendingRequest) {
+                return;
+            }
+
+            this.pendingGraphRequests.delete(message.id);
+            window.clearTimeout(pendingRequest.timeoutId);
+            pendingRequest.resolve({
+                commits: Array.isArray(message.graph?.commits) ? message.graph.commits : [],
+            });
+            return;
+        }
+
         if (message.type !== 'execResult' || typeof message.id !== 'string') {
             return;
         }
@@ -191,6 +230,7 @@ function App() {
     return (
         <GitChordContext.Provider value={{
             gitChord,
+            git: commandExecutor,
             pageGroup,
             currentRepoRoot,
             language,

@@ -3,5 +3,6 @@
 .intellijPlatform
 .qodana
 .demo/
-build
+build/
+bin/
 src/main/resources/webview/index.js
