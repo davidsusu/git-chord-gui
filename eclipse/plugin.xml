@@ -10,19 +10,163 @@
       </category>
       <view
             id="hu.webarticum.gitchordgui.eclipse.views.GitChordGui"
-            name="Git Chord GUI"
+            name="Git Chord"
             icon="icons/sample.png"
             class="hu.webarticum.gitchordgui.eclipse.views.GitChordGui"
             category="git"
+            allowMultiple="true"
             inject="true">
       </view>
    </extension>
+
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            id="hu.webarticum.gitchordgui.eclipse.commands.category"
+            name="Git Chord">
+      </category>
+      <command
+            id="hu.webarticum.gitchordgui.eclipse.commands.about"
+            name="About"
+            categoryId="hu.webarticum.gitchordgui.eclipse.commands.category">
+      </command>
+      <command
+            id="hu.webarticum.gitchordgui.eclipse.commands.cliHelp"
+            name="CLI Help"
+            categoryId="hu.webarticum.gitchordgui.eclipse.commands.category">
+      </command>
+      <command
+            id="hu.webarticum.gitchordgui.eclipse.commands.repoState"
+            name="Current State"
+            categoryId="hu.webarticum.gitchordgui.eclipse.commands.category">
+      </command>
+      <command
+            id="hu.webarticum.gitchordgui.eclipse.commands.createSnapshot"
+            name="Create Snapshot"
+            categoryId="hu.webarticum.gitchordgui.eclipse.commands.category">
+      </command>
+      <command
+            id="hu.webarticum.gitchordgui.eclipse.commands.repoStateFromSelection"
+            name="Git Chord: Current State"
+            categoryId="hu.webarticum.gitchordgui.eclipse.commands.category">
+      </command>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            commandId="hu.webarticum.gitchordgui.eclipse.commands.about"
+            class="hu.webarticum.gitchordgui.eclipse.actions.GitChordCommandHandler">
+      </handler>
+      <handler
+            commandId="hu.webarticum.gitchordgui.eclipse.commands.cliHelp"
+            class="hu.webarticum.gitchordgui.eclipse.actions.GitChordCommandHandler">
+      </handler>
+      <handler
+            commandId="hu.webarticum.gitchordgui.eclipse.commands.repoState"
+            class="hu.webarticum.gitchordgui.eclipse.actions.GitChordCommandHandler">
+      </handler>
+      <handler
+            commandId="hu.webarticum.gitchordgui.eclipse.commands.createSnapshot"
+            class="hu.webarticum.gitchordgui.eclipse.actions.GitChordCommandHandler">
+      </handler>
+      <handler
+            commandId="hu.webarticum.gitchordgui.eclipse.commands.repoStateFromSelection"
+            class="hu.webarticum.gitchordgui.eclipse.actions.GitChordCommandHandler">
+      </handler>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="menu:org.eclipse.ui.main.menu?after=additions">
+         <menu
+               id="hu.webarticum.gitchordgui.eclipse.menu"
+               label="Git Chord">
+            <command
+                  commandId="hu.webarticum.gitchordgui.eclipse.commands.about"
+                  label="About"
+                  style="push">
+            </command>
+            <command
+                  commandId="hu.webarticum.gitchordgui.eclipse.commands.cliHelp"
+                  label="CLI Help"
+                  style="push">
+            </command>
+            <separator
+                  name="repository"
+                  visible="true">
+            </separator>
+            <command
+                  commandId="hu.webarticum.gitchordgui.eclipse.commands.repoState"
+                  label="Current State"
+                  style="push">
+            </command>
+            <command
+                  commandId="hu.webarticum.gitchordgui.eclipse.commands.createSnapshot"
+                  label="Create Snapshot"
+                  style="push">
+            </command>
+         </menu>
+      </menuContribution>
+      <menuContribution
+            locationURI="popup:org.eclipse.ui.navigator.ProjectExplorer#PopupMenu?after=additions">
+         <command
+               commandId="hu.webarticum.gitchordgui.eclipse.commands.repoStateFromSelection"
+               label="Git Chord: Current State"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <count
+                        value="+">
+                  </count>
+               </with>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+      <menuContribution
+            locationURI="popup:org.eclipse.jdt.ui.PackageExplorer?after=additions">
+         <command
+               commandId="hu.webarticum.gitchordgui.eclipse.commands.repoStateFromSelection"
+               label="Git Chord: Current State"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <count
+                        value="+">
+                  </count>
+               </with>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            id="hu.webarticum.gitchordgui.eclipse.preferences"
+            name="Git Chord"
+            class="hu.webarticum.gitchordgui.eclipse.preferences.GitChordPreferencePage">
+      </page>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup
+            class="hu.webarticum.gitchordgui.eclipse.startup.GitChordStartup">
+      </startup>
+   </extension>
+
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension
-            targetID="org.eclipse.jdt.ui.JavaPerspective">
+            targetID="org.eclipse.ui.resourcePerspective">
          <view
-               id="hu.webarticum.gitchordgui.eclipse.views.BrowserView"
+               id="hu.webarticum.gitchordgui.eclipse.views.GitChordGui"
                relative="org.eclipse.ui.views.ProblemView"
                relationship="stack">
          </view>

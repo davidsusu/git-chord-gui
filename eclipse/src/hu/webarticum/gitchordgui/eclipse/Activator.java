@@ -1,5 +1,6 @@
 package hu.webarticum.gitchordgui.eclipse;
 
+import hu.webarticum.gitchordgui.eclipse.preferences.GitChordPreferences;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -24,6 +25,7 @@ public class Activator extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
+		GitChordPreferences.initializeDefaults(getPreferenceStore());
 	}
 
 	@Override
