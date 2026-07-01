@@ -77,7 +77,7 @@ if [ -x "$cli_path" ]; then
 fi
 
 if has_context_argument "$@"; then
-    node "$script_dir/server.mjs" "$@"
+    NODE_ENV=development node "$script_dir/server.mjs" "$@"
 else
-    node "$script_dir/server.mjs" "$@" "$demo_context_dir"
+    NODE_ENV=development node "$script_dir/server.mjs" "$@" "$demo_context_dir"
 fi

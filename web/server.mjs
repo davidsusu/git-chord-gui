@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 
-import { execFileSync } from "node:child_process";
+import { execFileSync, spawn } from "node:child_process";
 import { createServer } from "node:http";
 import net from "node:net";
-import { existsSync, realpathSync } from "node:fs";
+import { existsSync, realpathSync, statSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import next from "next";
-import { spawn } from "node:child_process";
 
+const COMMAND_NAME = "git-chord-gui";
 const DEFAULT_PORT = 3333;
 const HOST = "127.0.0.1";
 
@@ -20,11 +20,11 @@ if (options.help) {
     process.exit(0);
 }
 
-const contextDir = realpathSync(resolve(process.cwd(), options.contextDir ?? process.cwd()));
+const contextDir = resolveContextDir(options.contextDir);
 const repoRoot = resolveRepoRoot(contextDir);
 const commandPath = process.env.GIT_CHORD_COMMAND_PATH || inferGitChordCommandPath();
 const port = await findAvailablePort(options.port);
-const dev = process.env.NODE_ENV !== "production";
+const dev = process.env.NODE_ENV === "development";
 const url = `http://${HOST}:${port}`;
 
 process.env.GIT_CHORD_WEB_CONTEXT_DIR = contextDir;
@@ -63,7 +63,7 @@ function parseArgs(args) {
         contextDir: null,
         launchBrowser: false,
         help: false,
-        port: Number.parseInt(process.env.PORT || `${DEFAULT_PORT}`, 10) || DEFAULT_PORT,
+        port: null,
     };
 
     for (let index = 0; index < args.length; index += 1) {
@@ -73,12 +73,10 @@ function parseArgs(args) {
         } else if (arg === "-h" || arg === "--help") {
             result.help = true;
         } else if (arg === "-p" || arg === "--port") {
-            const port = Number.parseInt(args[index + 1] ?? "", 10);
-            if (!Number.isInteger(port) || port <= 0) {
-                fail(`Invalid port: ${args[index + 1] ?? ""}`);
-            }
-            result.port = port;
+            result.port = parsePort(args[index + 1] ?? "");
             index += 1;
+        } else if (arg.startsWith("--port=")) {
+            result.port = parsePort(arg.slice("--port=".length));
         } else if (arg.startsWith("-")) {
             fail(`Unknown option: ${arg}`);
         } else if (result.contextDir === null) {
@@ -88,7 +86,37 @@ function parseArgs(args) {
         }
     }
 
+    result.port = result.help
+        ? DEFAULT_PORT
+        : result.port ?? parsePort(process.env.PORT?.trim() || `${DEFAULT_PORT}`);
     return result;
+}
+
+function parsePort(value) {
+    if (!/^\d+$/.test(value)) {
+        fail(`Invalid port: ${value}`);
+    }
+    const port = Number(value);
+    if (!Number.isSafeInteger(port) || port <= 0 || port > 65535) {
+        fail(`Invalid port: ${value}`);
+    }
+    return port;
+}
+
+function resolveContextDir(contextDir) {
+    const target = resolve(process.cwd(), contextDir ?? ".");
+    try {
+        const stats = statSync(target);
+        if (!stats.isDirectory()) {
+            fail(`Not a directory: ${target}`);
+        }
+        return realpathSync(target);
+    } catch (error) {
+        if (error?.code === "ENOENT") {
+            fail(`Directory does not exist: ${target}`);
+        }
+        fail(`Cannot access directory: ${target}`);
+    }
 }
 
 function resolveRepoRoot(contextDir) {
@@ -111,7 +139,7 @@ function inferGitChordCommandPath() {
 }
 
 async function findAvailablePort(preferredPort) {
-    for (let port = preferredPort; port < preferredPort + 50; port += 1) {
+    for (let port = preferredPort; port <= 65535 && port < preferredPort + 50; port += 1) {
         if (await isPortAvailable(port)) {
             return port;
         }
@@ -138,24 +166,35 @@ function openBrowser(url) {
             : "xdg-open";
     const args = process.platform === "win32" ? ["/c", "start", "", url] : [url];
     const child = spawn(command, args, { detached: true, stdio: "ignore" });
+    child.once("error", error => {
+        log(`Browser launch skipped: ${error.message}`);
+    });
     child.unref();
 }
 
 function printHelp() {
-    console.log(`Usage: node server.mjs [options] [directory]
+    console.log(`Usage: ${COMMAND_NAME} [directory] [options]
+
+Run the Git Chord web GUI for a directory. If directory is omitted, the current
+working directory is used.
 
 Options:
-  -b, --launch-browser  Open the local GUI URL in the default browser.
-  -p, --port <port>     Preferred local port. Defaults to ${DEFAULT_PORT}.
-  -h, --help            Show this help.
+  -p, --port <port>       Preferred local port. Defaults to ${DEFAULT_PORT}.
+  -b, --launch-browser    Open the local GUI URL in the default browser if available.
+  -h, --help              Show this help.
+
+Examples:
+  ${COMMAND_NAME}
+  ${COMMAND_NAME} some/git/path -p 3334
+  ${COMMAND_NAME} . --launch-browser
 `);
 }
 
 function log(message) {
-    console.log(`[git-chord-web] ${message}`);
+    console.log(`[${COMMAND_NAME}] ${message}`);
 }
 
 function fail(message) {
-    console.error(`[git-chord-web] ERROR: ${message}`);
+    console.error(`[${COMMAND_NAME}] ERROR: ${message}`);
     process.exit(1);
 }

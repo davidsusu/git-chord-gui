@@ -1,13 +1,24 @@
 {
-  "name": "git-chord-gui-web",
+  "name": "git-chord-gui",
   "version": "0.1.0-SNAPSHOT",
-  "private": true,
+  "description": "Local web GUI runner for Git Chord.",
+  "license": "MIT",
+  "bin": {
+    "git-chord-gui": "./server.mjs"
+  },
   "scripts": {
-    "dev": "node server.mjs",
+    "dev": "NODE_ENV=development node server.mjs",
     "dev:linked": "sh ./dev.sh",
     "build": "next build",
+    "build:npx": "node scripts/build-npx.mjs",
     "start": "NODE_ENV=production node server.mjs"
   },
+  "engines": {
+    "node": ">=18.17.0"
+  },
+  "bundledDependencies": [
+    "@git-chord/gui-core"
+  ],
   "dependencies": {
     "@git-chord/gui-core": "file:../core/package-dist/git-chord-gui-core-0.1.0-SNAPSHOT.tgz",
     "next": "14.2.35",

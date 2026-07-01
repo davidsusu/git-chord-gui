@@ -1,0 +1,16 @@
+src/
+scripts/
+.demo/
+.next/cache/
+.next/trace
+.next/types/
+package-dist/
+node_modules/.cache/
+*.tgz
+*.tsbuildinfo
+build.sh
+demo.sh
+dev.sh
+next-env.d.ts
+package-lock.json
+tsconfig.json
